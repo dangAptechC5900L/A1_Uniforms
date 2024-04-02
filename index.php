@@ -48,20 +48,21 @@
                                 <li class="menu-item-has-children active">
                                     <a href="index.php">Home</a>
                                 </li>
-                             
+
                                 <li class="menu-item-has-children">
                                     <a href="shop.php">Shop</a>
                                     <ul class="sub-menu">
-                                        <li><a href="shop.php#Shirts">Shirts</a></li>
-                                        <li><a href="shop.php#Skirts">Skirts</a></li>
-                                        <li><a href="shop.php#Frocks">Frocks</a></li>
-                                        <li><a href="shop.php#P-T-T-shirts">P.T.T.shirts</a></li>
-                                        <li><a href="shop.php#P-T-shorts">P.T.shorts</a></li>
-                                        <li><a href="shop.php#P-T-track-pants">P.T.track-pants</a></li>
-                                        <li><a href="shop.php#Belts">Belts</a></li>
-                                        <li><a href="shop.php#Ties">Ties</a></li>
-                                        <li><a href="shop.php#Logos">Logos</a></li>
-                                        <li><a href="shop.php#Socks">Socks</a></li>
+                                        <li><a href="shop.html">shop</a></li>
+                                        <li><a href="productByCategory.php?category_id=1">Shirts</a></li>
+                                        <li><a href="productByCategory.php?category_id=2">Skirts</a></li>
+                                        <li><a href="productByCategory.php?category_id=3">Frocks </a></li>
+                                        <li><a href="productByCategory.php?category_id=4"> P.T. T-shirts</a></li>
+                                        <li><a href="productByCategory.php?category_id=5">P.T. shorts</a></li>
+                                        <li><a href="productByCategory.php?category_id=6">P.T. track pants</a></li>
+                                        <li><a href="productByCategory.php?category_id=7">Belts</a></li>
+                                        <li><a href="productByCategory.php?category_id=8">Ties</a></li>
+                                        <li><a href="productByCategory.php?category_id=9">Logos</a></li>
+                                        <li><a href="productByCategory.php?category_id=10">Socks</a></li>
                                     </ul>
                                 </li>
                                 <li class="menu-item-has-children">
@@ -134,16 +135,17 @@
                                             </li>
                                             <li><a href="shop.php">Shop<i class="fa fa-angle-down"></i></a>
                                                 <ul class="sub_menu pages">
-                                                    <li><a href="shop.php#Shirts">Shirts</a></li>
-                                                    <li><a href="shop.php#Skirts">Skirts</a></li>
-                                                    <li><a href="shop.php#Frocks">Frocks</a></li>
-                                                    <li><a href="shop.php#P-T-T-shirts">P.T.T.shirts</a></li>
-                                                    <li><a href="shop.php#P-T-shorts">P.T.shorts</a></li>
-                                                    <li><a href="shop.php#P-T-track-pants">P.T.track-pants</a></li>
-                                                    <li><a href="shop.php#Belts">Belts</a></li>
-                                                    <li><a href="shop.php#Ties">Ties</a></li>
-                                                    <li><a href="shop.php#Logos">Logos</a></li>
-                                                    <li><a href="shop.php#Socks">Socks</a></li>
+                                                    <li><a href="shop.html">shop</a></li>
+                                                    <li><a href="productByCategory.php?category_id=1">Shirts</a></li>
+                                                    <li><a href="productByCategory.php?category_id=2">Skirts</a></li>
+                                                    <li><a href="productByCategory.php?category_id=3">Frocks </a></li>
+                                                    <li><a href="productByCategory.php?category_id=4"> P.T. T-shirts</a></li>
+                                                    <li><a href="productByCategory.php?category_id=5">P.T. shorts</a></li>
+                                                    <li><a href="productByCategory.php?category_id=6">P.T. track pants</a></li>
+                                                    <li><a href="productByCategory.php?category_id=7">Belts</a></li>
+                                                    <li><a href="productByCategory.php?category_id=8">Ties</a></li>
+                                                    <li><a href="productByCategory.php?category_id=9">Logos</a></li>
+                                                    <li><a href="productByCategory.php?category_id=10">Socks</a></li>
                                                 </ul>
                                             </li>
                                             <li class="active"><a href="about.php">About us</a></li>
@@ -165,7 +167,7 @@
     </header>
 
     <div class="slider_area slider_style owl-carousel">
-        <div class="single_slider" data-bgimg="assets/img/slider/slide3.png" >
+        <div class="single_slider" data-bgimg="assets/img/slider/slide3.png">
             <div class="container-fluid">
                 <div class="row align-items-center">
                     <div class="col-12">
@@ -184,7 +186,7 @@
         <div class="footer_top">
             <div class="container">
                 <div class="row">
-                   
+
                     <div class="col-lg-3 col-md-6 col-sm-6 col-6">
                         <div class="widgets_container">
                             <h3>Information</h3>
@@ -220,9 +222,15 @@
                             <h3>A-1 Uniforms Company</h3>
                             <div class="footer_menu">
                                 <ul>
-                                    <li><p>Tax code: 010888888</p></li>
-                                    <li><p>Establishment date: 04/03/2016</p></li>
-                                    <li><p>Field: Fashion, Accessories, Uniforms. A-1 Uniforms builds and develops products that bring value to the community.</p></li>
+                                    <li>
+                                        <p>Tax code: 010888888</p>
+                                    </li>
+                                    <li>
+                                        <p>Establishment date: 04/03/2016</p>
+                                    </li>
+                                    <li>
+                                        <p>Field: Fashion, Accessories, Uniforms. A-1 Uniforms builds and develops products that bring value to the community.</p>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -243,13 +251,13 @@
                             </div>
                         </div>
                     </div>
-  
+
                 </div>
             </div>
         </div>
         <div class="footer_bottom">
             <div class="container">
-               <div class="row">
+                <div class="row">
                     <div class="col-md-12">
                         <div class="copyright_area">
                             <p> &copy; 2024 <strong> A-1 Uniforms </strong></p>
