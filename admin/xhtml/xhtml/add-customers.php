@@ -29,8 +29,8 @@ function addCustomers($conn)
 			return;
 		}
 
-		// Mã hóa mật khẩu sử dụng bcrypt
-		$hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+		// Mã hóa mật khẩu sử dụng sha1
+		$hashedPassword = sha1($password);
 		$isDeleted = false;
 		$sql = "INSERT INTO customer (username,password,first_name,last_name,middle_name,email,phone_number,address,isDeleted)
 		 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";

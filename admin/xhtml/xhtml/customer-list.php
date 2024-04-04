@@ -3,11 +3,30 @@ include '../../../function.php';
 
 $conn = initConnection();
 
+//Change Status
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['customer_id'])) {
+	$customer_id = $_POST['customer_id'];
+
+	// Đảo ngược trạng thái của khách hàng trong cơ sở dữ liệu
+	$sql = "UPDATE customer SET isDeleted = 1 - isDeleted WHERE customer_id = ?";
+	$stmt = $conn->prepare($sql);
+	$stmt->bind_param('i', $customer_id);
+
+	if ($stmt->execute()) {
+		// Chuyển hướng lại đến trang hiện tại sau khi cập nhật thành công
+		header("Location: " . $_SERVER['PHP_SELF']);
+		exit();
+	} else {
+		echo "Có lỗi xảy ra khi cập nhật trạng thái!";
+	}
+	$stmt->close();
+}
+
 function getTotalCustomer($conn)
 {
-    $sql = "SELECT COUNT(*) FROM customer";
-    $result = $conn->query($sql);
-    return $result->fetch_all(MYSQLI_ASSOC);
+	$sql = "SELECT COUNT(*) FROM customer";
+	$result = $conn->query($sql);
+	return $result->fetch_all(MYSQLI_ASSOC);
 }
 
 function getCustomerByUserName($conn)
@@ -75,7 +94,7 @@ $rows = getTotalCustomer($conn);
 	<!-- MOBILE SPECIFIC -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- Favicon icon -->
-	
+
 
 	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
 	<link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -708,97 +727,7 @@ $rows = getTotalCustomer($conn);
 
 								</a>
 							</li>
-							<li class="nav-item dropdown notification_dropdown">
-								<a class="nav-link bell bell-link primary" href="javascript:void(0);">
-									<svg width="22" height="22" viewBox="0 0 23 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-										<path d="M20.4604 0.848846H3.31682C2.64742 0.849582 2.00565 1.11583 1.53231 1.58916C1.05897 2.0625 0.792727 2.70427 0.791992 3.37367V15.1562C0.792727 15.8256 1.05897 16.4674 1.53231 16.9407C2.00565 17.414 2.64742 17.6803 3.31682 17.681C3.53999 17.6812 3.75398 17.7699 3.91178 17.9277C4.06958 18.0855 4.15829 18.2995 4.15843 18.5226V20.3168C4.15843 20.6214 4.24112 20.9204 4.39768 21.1817C4.55423 21.4431 4.77879 21.6571 5.04741 21.8008C5.31602 21.9446 5.61861 22.0127 5.92292 21.998C6.22723 21.9833 6.52183 21.8863 6.77533 21.7173L12.6173 17.8224C12.7554 17.7299 12.9179 17.6807 13.0841 17.681H17.187C17.7383 17.68 18.2742 17.4993 18.7136 17.1664C19.1531 16.8334 19.472 16.3664 19.6222 15.8359L22.8965 4.05007C22.9998 3.67478 23.0152 3.28071 22.9413 2.89853C22.8674 2.51634 22.7064 2.15636 22.4707 1.8466C22.2349 1.53684 21.9309 1.28565 21.5822 1.1126C21.2336 0.93954 20.8497 0.849282 20.4604 0.848846ZM21.2732 3.60301L18.0005 15.3847C17.9499 15.5614 17.8432 15.7168 17.6964 15.8274C17.5496 15.938 17.3708 15.9979 17.187 15.9978H13.0841C12.5855 15.9972 12.098 16.1448 11.6836 16.4219L5.84165 20.3168V18.5226C5.84091 17.8532 5.57467 17.2115 5.10133 16.7381C4.62799 16.2648 3.98622 15.9985 3.31682 15.9978C3.09365 15.9977 2.87966 15.909 2.72186 15.7512C2.56406 15.5934 2.47534 15.3794 2.47521 15.1562V3.37367C2.47534 3.15051 2.56406 2.93652 2.72186 2.77871C2.87966 2.62091 3.09365 2.5322 3.31682 2.53206H20.4604C20.5905 2.53239 20.7187 2.56274 20.8352 2.62073C20.9516 2.67872 21.0531 2.7628 21.1318 2.86643C21.2104 2.97005 21.2641 3.09042 21.2886 3.21818C21.3132 3.34594 21.3079 3.47763 21.2732 3.60301Z" fill="#000"></path>
-										<path d="M5.84161 8.42333H10.0497C10.2729 8.42333 10.4869 8.33466 10.6448 8.17683C10.8026 8.019 10.8913 7.80493 10.8913 7.58172C10.8913 7.35851 10.8026 7.14445 10.6448 6.98661C10.4869 6.82878 10.2729 6.74011 10.0497 6.74011H5.84161C5.6184 6.74011 5.40433 6.82878 5.2465 6.98661C5.08867 7.14445 5 7.35851 5 7.58172C5 7.80493 5.08867 8.019 5.2465 8.17683C5.40433 8.33466 5.6184 8.42333 5.84161 8.42333Z" fill="#000"></path>
-										<path d="M13.4161 10.1066H5.84161C5.6184 10.1066 5.40433 10.1952 5.2465 10.3531C5.08867 10.5109 5 10.725 5 10.9482C5 11.1714 5.08867 11.3854 5.2465 11.5433C5.40433 11.7011 5.6184 11.7898 5.84161 11.7898H13.4161C13.6393 11.7898 13.8534 11.7011 14.0112 11.5433C14.169 11.3854 14.2577 11.1714 14.2577 10.9482C14.2577 10.725 14.169 10.5109 14.0112 10.3531C13.8534 10.1952 13.6393 10.1066 13.4161 10.1066Z" fill="#000"></path>
-									</svg>
-									<div class="pulse-css"></div>
-								</a>
-							</li>
-							<li class="nav-item dropdown notification_dropdown">
-								<a class="nav-link primary" href="javascript:void(0);" role="button" data-bs-toggle="dropdown">
-									<svg width="22" height="22" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-										<path d="M21.75 14.8385V12.0463C21.7471 9.88552 20.9385 7.80353 19.4821 6.20735C18.0258 4.61116 16.0264 3.61555 13.875 3.41516V1.625C13.875 1.39294 13.7828 1.17038 13.6187 1.00628C13.4546 0.842187 13.2321 0.75 13 0.75C12.7679 0.75 12.5454 0.842187 12.3813 1.00628C12.2172 1.17038 12.125 1.39294 12.125 1.625V3.41534C9.97361 3.61572 7.97429 4.61131 6.51794 6.20746C5.06159 7.80361 4.25291 9.88555 4.25 12.0463V14.8383C3.26257 15.0412 2.37529 15.5784 1.73774 16.3593C1.10019 17.1401 0.751339 18.1169 0.75 19.125C0.750764 19.821 1.02757 20.4882 1.51969 20.9803C2.01181 21.4724 2.67904 21.7492 3.375 21.75H8.71346C8.91521 22.738 9.45205 23.6259 10.2331 24.2636C11.0142 24.9013 11.9916 25.2497 13 25.2497C14.0084 25.2497 14.9858 24.9013 15.7669 24.2636C16.548 23.6259 17.0848 22.738 17.2865 21.75H22.625C23.321 21.7492 23.9882 21.4724 24.4803 20.9803C24.9724 20.4882 25.2492 19.821 25.25 19.125C25.2486 18.117 24.8998 17.1402 24.2622 16.3594C23.6247 15.5786 22.7374 15.0414 21.75 14.8385ZM6 12.0463C6.00232 10.2113 6.73226 8.45223 8.02974 7.15474C9.32723 5.85726 11.0863 5.12732 12.9212 5.125H13.0788C14.9137 5.12732 16.6728 5.85726 17.9703 7.15474C19.2677 8.45223 19.9977 10.2113 20 12.0463V14.75H6V12.0463ZM13 23.5C12.4589 23.4983 11.9316 23.3292 11.4905 23.0159C11.0493 22.7026 10.716 22.2604 10.5363 21.75H15.4637C15.284 22.2604 14.9507 22.7026 14.5095 23.0159C14.0684 23.3292 13.5411 23.4983 13 23.5ZM22.625 20H3.375C3.14298 19.9999 2.9205 19.9076 2.75644 19.7436C2.59237 19.5795 2.50014 19.357 2.5 19.125C2.50076 18.429 2.77757 17.7618 3.26969 17.2697C3.76181 16.7776 4.42904 16.5008 5.125 16.5H20.875C21.571 16.5008 22.2382 16.7776 22.7303 17.2697C23.2224 17.7618 23.4992 18.429 23.5 19.125C23.4999 19.357 23.4076 19.5795 23.2436 19.7436C23.0795 19.9076 22.857 19.9999 22.625 20Z" fill="#000"></path>
-									</svg>
-									<div class="pulse-css"></div>
-								</a>
-								<div class="dropdown-menu dropdown-menu-end">
-									<div id="DZ_W_Notification1" class="widget-media dz-scroll p-3" style="height:380px;">
-										<ul class="timeline">
-											<li>
-												<div class="timeline-panel">
-													<div class="media me-2">
-														<img alt="image" width="50" src="images/avatar/1.jpg">
-													</div>
-													<div class="media-body">
-														<h6 class="mb-1">Dr sultads Send you Photo</h6>
-														<small class="d-block">29 July 2020 - 02:26 PM</small>
-													</div>
-												</div>
-											</li>
-											<li>
-												<div class="timeline-panel">
-													<div class="media me-2 media-info">
-														KG
-													</div>
-													<div class="media-body">
-														<h6 class="mb-1">Resport created successfully</h6>
-														<small class="d-block">29 July 2020 - 02:26 PM</small>
-													</div>
-												</div>
-											</li>
-											<li>
-												<div class="timeline-panel">
-													<div class="media me-2 media-success">
-														<i class="fa fa-home"></i>
-													</div>
-													<div class="media-body">
-														<h6 class="mb-1">Reminder : Treatment Time!</h6>
-														<small class="d-block">29 July 2020 - 02:26 PM</small>
-													</div>
-												</div>
-											</li>
-											<li>
-												<div class="timeline-panel">
-													<div class="media me-2">
-														<img alt="image" width="50" src="images/avatar/1.jpg">
-													</div>
-													<div class="media-body">
-														<h6 class="mb-1">Dr sultads Send you Photo</h6>
-														<small class="d-block">29 July 2020 - 02:26 PM</small>
-													</div>
-												</div>
-											</li>
-											<li>
-												<div class="timeline-panel">
-													<div class="media me-2 media-danger">
-														KG
-													</div>
-													<div class="media-body">
-														<h6 class="mb-1">Resport created successfully</h6>
-														<small class="d-block">29 July 2020 - 02:26 PM</small>
-													</div>
-												</div>
-											</li>
-											<li>
-												<div class="timeline-panel">
-													<div class="media me-2 media-primary">
-														<i class="fa fa-home"></i>
-													</div>
-													<div class="media-body">
-														<h6 class="mb-1">Reminder : Treatment Time!</h6>
-														<small class="d-block">29 July 2020 - 02:26 PM</small>
-													</div>
-												</div>
-											</li>
-										</ul>
-									</div>
-									<a class="all-notification" href="javascript:void(0);">See all notifications <i class="ti-arrow-right"></i></a>
-								</div>
-							</li>
+
 							<li class="nav-item dropdown header-profile">
 								<a class="nav-link" href="javascript:void(0);" role="button" data-bs-toggle="dropdown">
 									<img src="images/profile/pic1.jpg" width="20" alt="">
@@ -828,18 +757,7 @@ $rows = getTotalCustomer($conn);
 									</a>
 								</div>
 							</li>
-							<li class="dropdown schedule-event-inner primary">
-								<a href="javascript:void(0)" class="btn btn-primary btn-rounded event-btn">
-									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="scale5 me-0 mb-0 me-sm-2 mb-sm-1">
-										<path d="M19 4H5C3.89543 4 3 4.89543 3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6C21 4.89543 20.1046 4 19 4Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-										<path d="M16 2V6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-										<path d="M8 2V6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-										<path d="M3 10H21" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-									</svg>
-									<span class="d-none d-xl-inline-block">Schedule</span> <span class="d-none d-lg-inline-block">Event(5)</span>
-									<i class="fa fa-caret-right scale3 ms-2 d-none d-sm-inline-block"></i>
-								</a>
-							</li>
+
 						</ul>
 					</div>
 				</nav>
@@ -1049,9 +967,7 @@ $rows = getTotalCustomer($conn);
 					</li>
 				</ul>
 				<div class="copyright">
-					<p>Tixia Ticketing Admin Dashboard <br>© <span class="current-year">2024</span> All Rights Reserved</p>
-
-					<p class="op5">Made with <span class="heart"></span> by DexignZone</p>
+					<p class="op5">© 2024 A-1 Uniforms</p>
 				</div>
 			</div>
 		</div>
@@ -1147,127 +1063,149 @@ $rows = getTotalCustomer($conn);
             Content body start
         ***********************************-->
 		<?php foreach ($rows as $row) {
-								?>
-		<div class="content-body">
-			<!-- row -->
-			<div class="container-fluid">
-				<div class="row mb-5 align-items-center">
-					<div class="col-xl-3 mb-4 mb-xl-0">
-						<a href="add-customers.php" class="btn btn-primary light btn-lg d-block rounded shadow px-2">+ New Customer</a>
-					</div>
-					<div class="col-xl-9">
-						<div class="card m-0 ">
-							<div class="card-body py-3 py-md-2">
-								<div class="row align-items-center">
-									<div class="col-md-5 mb-3 mb-md-0">
-										<div class="media align-items-center">
-											<span class="me-2">
-												<svg width="24" height="24" class="user-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-													<g clip-path="url(#clip0)">
-														<path d="M21 24H3C2.73478 24 2.48043 23.8946 2.29289 23.7071C2.10536 23.5196 2 23.2652 2 23V22.008C2.00287 20.4622 2.52021 18.9613 3.47044 17.742C4.42066 16.5227 5.74971 15.6544 7.248 15.274C7.46045 15.2219 7.64959 15.1008 7.78571 14.9296C7.92182 14.7583 7.9972 14.5467 8 14.328V13.322L6.883 12.206C6.6032 11.9313 6.38099 11.6036 6.22937 11.2419C6.07776 10.8803 5.99978 10.4921 6 10.1V5.96201C6.01833 4.41693 6.62821 2.93765 7.70414 1.82861C8.78007 0.719572 10.2402 0.0651427 11.784 5.16174e-06C12.5992 -0.00104609 13.4067 0.158488 14.1603 0.469498C14.9139 0.780509 15.5989 1.2369 16.1761 1.81263C16.7533 2.38835 17.2114 3.07213 17.5244 3.82491C17.8373 4.5777 17.999 5.38476 18 6.20001V10.1C17.9997 10.4949 17.9204 10.8857 17.7666 11.2495C17.6129 11.6132 17.388 11.9426 17.105 12.218L16 13.322V14.328C16.0029 14.5469 16.0784 14.7586 16.2147 14.9298C16.351 15.1011 16.5404 15.2221 16.753 15.274C18.251 15.6548 19.5797 16.5232 20.5298 17.7424C21.4798 18.9617 21.997 20.4624 22 22.008V23C22 23.2652 21.8946 23.5196 21.7071 23.7071C21.5196 23.8946 21.2652 24 21 24ZM4 22H20C19.9954 20.8996 19.6249 19.8319 18.9469 18.9651C18.2689 18.0983 17.3219 17.4816 16.255 17.212C15.6125 17.0494 15.0423 16.6779 14.6341 16.1558C14.2259 15.6337 14.0028 14.9907 14 14.328V12.908C14.0001 12.6428 14.1055 12.3885 14.293 12.201L15.703 10.792C15.7965 10.7026 15.8711 10.5952 15.9221 10.4763C15.9731 10.3574 15.9996 10.2294 16 10.1V6.20001C16.0017 5.09492 15.5671 4.03383 14.7907 3.24737C14.0144 2.46092 12.959 2.01265 11.854 2.00001C10.8264 2.04117 9.85379 2.47507 9.1367 3.21225C8.41962 3.94943 8.01275 4.93367 8 5.96201V10.1C7.99979 10.2266 8.0249 10.352 8.07384 10.4688C8.12278 10.5856 8.19458 10.6914 8.285 10.78L9.707 12.2C9.89455 12.3875 9.99994 12.6418 10 12.907V14.327C9.99724 14.9896 9.77432 15.6325 9.3663 16.1545C8.95827 16.6766 8.3883 17.0482 7.746 17.211C6.67872 17.4804 5.73137 18.0972 5.05318 18.9642C4.37498 19.8313 4.00447 20.8993 4 22Z" fill="#222fb9" />
-													</g>
-													<defs>
-														<clipPath id="clip0">
-															<rect width="24" height="24" fill="white" />
-														</clipPath>
-													</defs>
-												</svg>
-											</span>
-											<div class="media-body ms-1">
-												<p class="mb-0 fs-14">Total Customer</p>
-												<h3 class="mb-0 text-black font-w600 fs-16"><?php echo $row['COUNT(*)'] ?> Person</h3>
+		?>
+			<div class="content-body">
+				<!-- row -->
+				<div class="container-fluid">
+					<div class="row mb-5 align-items-center">
+						<div class="col-xl-3 mb-4 mb-xl-0">
+							<a href="add-customers.php" class="btn btn-primary light btn-lg d-block rounded shadow px-2">+ New Customer</a>
+						</div>
+						<div class="col-xl-9">
+							<div class="card m-0 ">
+								<div class="card-body py-3 py-md-2">
+									<div class="row align-items-center">
+										<div class="col-md-5 mb-3 mb-md-0">
+											<div class="media align-items-center">
+												<span class="me-2">
+													<svg width="24" height="24" class="user-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<g clip-path="url(#clip0)">
+															<path d="M21 24H3C2.73478 24 2.48043 23.8946 2.29289 23.7071C2.10536 23.5196 2 23.2652 2 23V22.008C2.00287 20.4622 2.52021 18.9613 3.47044 17.742C4.42066 16.5227 5.74971 15.6544 7.248 15.274C7.46045 15.2219 7.64959 15.1008 7.78571 14.9296C7.92182 14.7583 7.9972 14.5467 8 14.328V13.322L6.883 12.206C6.6032 11.9313 6.38099 11.6036 6.22937 11.2419C6.07776 10.8803 5.99978 10.4921 6 10.1V5.96201C6.01833 4.41693 6.62821 2.93765 7.70414 1.82861C8.78007 0.719572 10.2402 0.0651427 11.784 5.16174e-06C12.5992 -0.00104609 13.4067 0.158488 14.1603 0.469498C14.9139 0.780509 15.5989 1.2369 16.1761 1.81263C16.7533 2.38835 17.2114 3.07213 17.5244 3.82491C17.8373 4.5777 17.999 5.38476 18 6.20001V10.1C17.9997 10.4949 17.9204 10.8857 17.7666 11.2495C17.6129 11.6132 17.388 11.9426 17.105 12.218L16 13.322V14.328C16.0029 14.5469 16.0784 14.7586 16.2147 14.9298C16.351 15.1011 16.5404 15.2221 16.753 15.274C18.251 15.6548 19.5797 16.5232 20.5298 17.7424C21.4798 18.9617 21.997 20.4624 22 22.008V23C22 23.2652 21.8946 23.5196 21.7071 23.7071C21.5196 23.8946 21.2652 24 21 24ZM4 22H20C19.9954 20.8996 19.6249 19.8319 18.9469 18.9651C18.2689 18.0983 17.3219 17.4816 16.255 17.212C15.6125 17.0494 15.0423 16.6779 14.6341 16.1558C14.2259 15.6337 14.0028 14.9907 14 14.328V12.908C14.0001 12.6428 14.1055 12.3885 14.293 12.201L15.703 10.792C15.7965 10.7026 15.8711 10.5952 15.9221 10.4763C15.9731 10.3574 15.9996 10.2294 16 10.1V6.20001C16.0017 5.09492 15.5671 4.03383 14.7907 3.24737C14.0144 2.46092 12.959 2.01265 11.854 2.00001C10.8264 2.04117 9.85379 2.47507 9.1367 3.21225C8.41962 3.94943 8.01275 4.93367 8 5.96201V10.1C7.99979 10.2266 8.0249 10.352 8.07384 10.4688C8.12278 10.5856 8.19458 10.6914 8.285 10.78L9.707 12.2C9.89455 12.3875 9.99994 12.6418 10 12.907V14.327C9.99724 14.9896 9.77432 15.6325 9.3663 16.1545C8.95827 16.6766 8.3883 17.0482 7.746 17.211C6.67872 17.4804 5.73137 18.0972 5.05318 18.9642C4.37498 19.8313 4.00447 20.8993 4 22Z" fill="#222fb9" />
+														</g>
+														<defs>
+															<clipPath id="clip0">
+																<rect width="24" height="24" fill="white" />
+															</clipPath>
+														</defs>
+													</svg>
+												</span>
+												<div class="media-body ms-1">
+													<p class="mb-0 fs-14">Total Customer</p>
+													<h3 class="mb-0 text-black font-w600 fs-16"><?php echo $row['COUNT(*)'] ?> Person</h3>
+												</div>
 											</div>
 										</div>
-									</div>
-									<div class="col-md-7 text-md-end">
-										<a href="javascript:void(0);" class="btn btn-outline-primary rounded btn-xs px-4">Active</a>
-										<a href="javascript:void(0);" class="btn btn-secondary rounded ms-2 btn-xs px-4">Edit</a>
-										<a href="javascript:void(0);" class="btn btn-danger rounded ms-2 btn-xs xs-4">Delete</a>
+										<div class="col-md-7 text-md-end">
+											<a href="javascript:void(0);" class="btn btn-outline-primary rounded btn-xs px-4">Active</a>
+											<a href="javascript:void(0);" class="btn btn-secondary rounded ms-2 btn-xs px-4">Edit</a>
+											<a href="javascript:void(0);" class="btn btn-danger rounded ms-2 btn-xs xs-4">Delete</a>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="col-lg-12">
-						<div class="table-responsive">
-							<table id="example5" class=" display mb-4 table-responsive-xl dataTablesCard fs-14">
-								<thead>
-									<tr>
-										<th>
-											<div class="form-check custom-checkbox">
-												<input type="checkbox" class="form-check-input" id="checkAll" required="">
-												<label class="form-check-label" for="checkAll"></label>
-											</div>
-										</th>
-										<th>ID</th>
-										<th>Username</th>
-										<th>Password</th>
-										<th>FirstName</th>
-										<th>Middle_Name</th>
-										<th>Last_Name</th>
-										<th>Email</th>
-										<th>Phone Number</th>
-										<th>Address</th>
-										<th>Chức năng</th>
-									</tr>
-								</thead>
-
-								<?php foreach ($customers as $customer) {
-								?>
-									<tbody>
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="table-responsive">
+								<table id="example5" class=" display mb-4 table-responsive-xl dataTablesCard fs-14">
+									<thead>
 										<tr>
-											<td>
+											<th>
 												<div class="form-check custom-checkbox">
-													<input type="checkbox" class="form-check-input" id="customCheckBox2" required="">
-													<label class="form-check-label" for="customCheckBox2"></label>
+													<input type="checkbox" class="form-check-input" id="checkAll" required="">
+													<label class="form-check-label" for="checkAll"></label>
 												</div>
-											</td>
-											<td><?= $customer['customer_id'] ?></td>
-											<td>
-												<p><?php echo $customer['username'] ?></p>
-											</td>
-											<td>
-												<p><?php echo $customer['password'] ?></p>
-											</td>
-											<td>
-												<p><?php echo $customer['first_name'] ?></p>
-											</td>
-											<td>
-												<p><?php echo $customer['middle_name'] ?></p>
-											</td>
-											<td>
-												<p><?php echo $customer['last_name'] ?></p>
-											</td>
-											<td>
-												<p><?php echo $customer['email'] ?></p>
-											</td>
-											<td>
-												<p><?php echo $customer['phone_number'] ?></p>
-											</td>
-											<td>
-												<p><?php echo $customer['address'] ?></p>
-											</td>
-											<td>
-												<div class="d-flex">
-													<a href="javascript:void(0);" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>
-													<a href="javascript:void(0);" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a>
-												</div>
-											</td>
+											</th>
+											<th>ID</th>
+											<th>Username</th>
+											<th>Password</th>
+											<th>FirstName</th>
+											<th>Middle_Name</th>
+											<th>Last_Name</th>
+											<th>Email</th>
+											<th>Phone Number</th>
+											<th>Address</th>
+											<th>Trạng thái</th>
+											<th>Chức năng</th>
+										</tr>
+									</thead>
+
+									<?php foreach ($customers as $customer) {
+									?>
+										<tbody>
+											<tr>
+												<td>
+													<div class="form-check custom-checkbox">
+														<input type="checkbox" class="form-check-input" id="customCheckBox2" required="">
+														<label class="form-check-label" for="customCheckBox2"></label>
+													</div>
+												</td>
+												<td><?= $customer['customer_id'] ?></td>
+												<td>
+													<p><?php echo $customer['username'] ?></p>
+												</td>
+												<td>
+													<p><?php echo $customer['password'] ?></p>
+												</td>
+												<td>
+													<p><?php echo $customer['first_name'] ?></p>
+												</td>
+												<td>
+													<p><?php echo $customer['middle_name'] ?></p>
+												</td>
+												<td>
+													<p><?php echo $customer['last_name'] ?></p>
+												</td>
+												<td>
+													<p><?php echo $customer['email'] ?></p>
+												</td>
+												<td>
+													<p><?php echo $customer['phone_number'] ?></p>
+												</td>
+												<td>
+													<p><?php echo $customer['address'] ?></p>
+												</td>
+
+												<!-- <td>
+													<div class="btn-group">
+														<?php if ($customer['isDeleted'] == 0) : ?>
+															<button id="activeBtn_<?php echo $customer['customer_id']; ?>" class="btn btn-success rounded" onclick="changeStatus(<?php echo $customer['customer_id']; ?>, 1)">Active</button>
+														<?php else : ?>
+															<button id="inactiveBtn_<?php echo $customer['customer_id']; ?>" class="btn btn-secondary rounded" onclick="changeStatus(<?php echo $customer['customer_id']; ?>, 0)">Inactive</button>
+														<?php endif; ?>
+													</div>
+												</td> -->
+												<td>
+													<div class="btn-group">
+														<form action="customer-list.php" method="post">
+															<button type="submit" name="customer_id" value="<?php echo $customer['customer_id']; ?>" class="btn <?php echo $customer['isDeleted'] == 0 ? 'btn-success' : 'btn-secondary'; ?> rounded">
+																<?php echo $customer['isDeleted'] == 0 ? "Active" : "Inactive"; ?>
+															</button>
+														</form>
+													</div>
+
+												</td>
+												<td>
+
+													<div class="d-flex">
+														<a href="edit-customer.php?customer_id=<?php echo $customer['customer_id']; ?>" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>
+														<a href="javascript:void(0);" class="btn btn-danger shadow btn-xs sharp"><i class="fa fa-trash"></i></a>
+													</div>
+												</td>
 
 
-									</tbody>
-								<?php }
-								?>
-							</table>
+										</tbody>
+									<?php }
+									?>
+								</table>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 		<?php }
-        ?>
+		?>
 		<!--**********************************
             Content body end
         ***********************************-->
@@ -1296,11 +1234,13 @@ $rows = getTotalCustomer($conn);
 				</div>
 			</div>
 		</div>
-
-		
-           
+	</div>
 
 
+	<div class="footer">
+		<div class="copyright">
+			<p>© 2024 A-1 Uniforms</p>
+		</div>
 	</div>
 	<!--**********************************
         Main wrapper end
@@ -1309,6 +1249,29 @@ $rows = getTotalCustomer($conn);
 	<!--**********************************
         Scripts
     ***********************************-->
+	<!-- <script>
+    function changeStatus(customer_id, new_status) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                if (this.responseText == "success") {
+                    // Nếu thành công, cập nhật giao diện người dùng
+                    var btnId = (new_status == 1) ? "activeBtn_" + customer_id : "inactiveBtn_" + customer_id;
+                    var btnText = (new_status == 1) ? "Active" : "Inactive";
+                    document.getElementById(btnId).innerHTML = btnText;
+                    document.getElementById(btnId).classList.toggle("btn-success");
+                    document.getElementById(btnId).classList.toggle("btn-secondary");
+                } else {
+                    alert("Có lỗi xảy ra khi cập nhật trạng thái!");
+                }
+            }
+        };
+        xhttp.open("POST", "customer-list.php", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send("customer_id=" + customer_id + "&new_status=" + new_status);
+    }
+</script> -->
+
 	<!-- Required vendors -->
 	<script src="vendor/global/global.min.js"></script>
 	<script src="vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
