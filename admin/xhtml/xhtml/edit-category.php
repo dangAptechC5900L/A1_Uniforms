@@ -7,71 +7,59 @@ include '../../../function.php';
 $conn = initConnection();
 
 // $customer_id = $_GET['customer_id'];
-$customer_id = $_GET['customer_id'] ?? null;
+$category_id = $_GET['category_id'] ?? null;
 
 
-editCustomer($conn, $customer_id);
+editCategory($conn, $category_id);
 
 
-$customers = getCustomerById($conn, $customer_id);
+$category = getCategoryById($conn, $category_id);
 
-function getCustomerById($conn, $customer_id)
+function getCategoryById($conn, $category_id)
 {
-    $sql = "SELECT * FROM customer WHERE customer_id=?";
+    $sql = "SELECT * FROM category WHERE category_id=?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('i', $customer_id);
+    $stmt->bind_param('i', $category_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    $customers = $result->fetch_all(MYSQLI_ASSOC);
+    $category = $result->fetch_all(MYSQLI_ASSOC);
     $stmt->close();
-    return $customers;
+    return $category;
 }
 
-function editCustomer($conn, $customer_id)
+function editCategory($conn, $category_id)
 {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $userName = $_POST["userName"];
-        $password = $_POST["customer_password"];
-        $firstName = $_POST["firstName"];
-        $middleName = $_POST["middleName"];
-        $lastName = $_POST["lastName"];
-        $email = $_POST["email"];
-        $phoneNumber = $_POST["phoneNumber"];
-        $address = $_POST["address"];
+        $category_name = $_POST["name"];
+        $description = $_POST["description"];
 
-        if (empty($userName) || empty($password) || empty($firstName) || empty($middleName) || empty($lastName) || empty($email) || empty($phoneNumber) || empty($address)) {
-            echo "Vui lòng điền đầy đủ thông tin.";
-            return;
-        }
+        if (empty($category_name) || empty($description)) {
+			echo "Please fill in all information.";
+			return;
+		}
 
-        // Kiểm tra các trường first_name, last_name, middle_name chỉ chứa ký tự
-        if (!preg_match('/^[a-zA-Z]+$/', $firstName) || !preg_match('/^[a-zA-Z]+$/', $middleName) || !preg_match('/^[a-zA-Z]+$/', $lastName)) {
-            echo "The 'first_name','middle_name','last_name' field only allows names, numbers are not allowed.";
-            return;
-        }
+		$product_id=0;
+		$isDeleted = false;
 
-        // Mã hóa mật khẩu sử dụng sha1
-        $hashedPassword = sha1($password);
-        $isDeleted = false;
+        $sql = "UPDATE category SET name=?,description=?,isDeleted=?,product_id=? WHERE category_id=?";
 
-        $sql = "UPDATE customer SET password=?,first_name=?,last_name=?,middle_name=?,email=?,phone_number=?,address=?,isDeleted=? WHERE customer_id=?";
-        // $sql = "UPDATE customer SET username=?,password=?,first_name=?,last_name=?,middle_name=?,email=?,phone_number=?,address=?,isDeleted=? WHERE customer_id=?";
-
-        //  VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssssssii",  $hashedPassword, $firstName, $lastName, $middleName, $email, $phoneNumber, $address, $isDeleted, $customer_id);
+        $stmt->bind_param("ssiii",  $category_name, $description, $isDeleted, $product_id, $category_id);
         //   $stmt->bind_param("sssssssii", $hashedPassword, $firstName,  $lastName,$customer_id);
         $stmt->execute();
 
 
-        if ($stmt->execute()) {
-            echo "Thêm khách hàng thành công";
-        } else {
-            echo "Lỗi khi sửa thông tin khách hàng: " . $stmt->error;
-        }
-        // Đóng kết nối tới cơ sở dữ liệu
-        $stmt->close();
+       // Thực hiện truy vấn
+		if ($stmt->execute()) {
+			echo "Add Category Success";
+			header("Location:category-list.php");
+		} else {
+			echo "Error! " . $stmt->error;
+		}
+
+		// Đóng kết nối tới cơ sở dữ liệu
+		$stmt->close();
     }
 }
 
@@ -172,7 +160,7 @@ function editCustomer($conn, $customer_id)
                     <div class="collapse navbar-collapse justify-content-between">
                         <div class="header-left">
                             <div class="dashboard_bar">
-                                Update Customers
+                                Update Category
                             </div>
                         </div>
 
@@ -522,59 +510,29 @@ function editCustomer($conn, $customer_id)
                     <div class="col-xl-12">
                         <div class="card  card-bx m-b30">
                             <div class="card-header bg-primary">
-                                <h6 class="title text-white">Edit Customer</h6>
+                                <h6 class="title text-white">Edit Category</h6>
                             </div>
 
-                            <?php foreach ($customers as $customer) {
+                            <?php foreach ($category as $category) {
                             ?>
-                                <form class="profile-form" action="edit-customer.php?customer_id=<?php echo $customer['customer_id']; ?>" method="post" onsubmit="return validateForm();">
+                                <form class="profile-form" action="edit-category.php?category_id=<?php echo $category['category_id']; ?>" method="post" onsubmit="return validateForm();">
                                     <div class="card-body">
                                         <div class="row">
+                                        <div class="col-sm-12 mb-3">
+											<label class=" form-label required">Name</label>
+											<input type="text" name="name" class="form-control" placeholder="Enter name category..." value="<?php echo $category['name'] ?>">
+										</div>
+                                       
 
-                                            <div class="col-sm-6 mb-3">
-                                                <label class="form-label required">Username</label>
-                                                <input type="text" name="userName" class="form-control" placeholder="Enter Username" value="<?php echo $customer['username']; ?>" readonly>
+                                            <div class="col-sm-12 mb-3">
+                                                <label class="form-label required">Description</label>
+                                                <input type="text" name="description" class="form-control" placeholder="Enter description..." value="<?php echo $category['description']; ?>" >
                                             </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <div class="form-group">
-                                                    <label class="form-label required">Password </label>
-                                                    <div class="position-relative">
-                                                        <input type="password" name="customer_password" id="dz-password" class="form-control" placeholder="Enter Password" value="<?php echo $customer['password']; ?>">
-                                                        <span class="show-pass eye">
-                                                            <i class="fa fa-eye-slash"></i>
-                                                            <i class="fa fa-eye"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <label class="form-label required">First name</label>
-                                                <input type="text" name="firstName" class="form-control" placeholder="Enter First name" value="<?php echo $customer['first_name']; ?>">
-                                            </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <label class="form-label required">Middle name</label>
-                                                <input type="text" name="middleName" class="form-control" placeholder="Enter Middle name" value="<?php echo $customer['middle_name']; ?>">
-                                            </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <label class="form-label required">Last name</label>
-                                                <input type="text" name="lastName" class="form-control" placeholder="Enter Last name" value="<?php echo $customer['last_name']; ?>">
-                                            </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <label class="form-label required">Email</label>
-                                                <input type="email" name="email" class="form-control" placeholder="Enter Email" value="<?php echo $customer['email']; ?>">
-                                            </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <label class="form-label required">Phone Number</label>
-                                                <input type="text" name="phoneNumber" class="form-control" placeholder="Enter Phone Number" value="<?php echo $customer['phone_number']; ?>">
-                                            </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <label class="form-label required">Address</label>
-                                                <input type="text" name="address" class="form-control" placeholder="Enter Address" value="<?php echo $customer['address']; ?>">
-                                            </div>
+                                           
                                         </div>
                                     </div>
                                     <div class="card-footer justify-content-end">
-                                        <button class="btn btn-primary">Update Customer</button>
+                                        <button class="btn btn-primary">Update Category</button>
                                     </div>
                                 </form>
                             <?php }
@@ -656,42 +614,13 @@ function editCustomer($conn, $customer_id)
     </script>
     <script>
         function validateForm() {
-            var userName = document.getElementsByName("userName")[0].value;
-            var password = document.getElementsByName("customer_password")[0].value;
-            var firstName = document.getElementsByName("firstName")[0].value;
-            var lastName = document.getElementsByName("lastName")[0].value;
-            var middleName = document.getElementsByName("middleName")[0].value;
-            var email = document.getElementsByName("email")[0].value;
-            var phoneNumber = document.getElementsByName("phoneNumber")[0].value;
-            var address = document.getElementsByName("address")[0].value;
+            var categoryName = document.getElementsByName("name")[0].value;
+            var description = document.getElementsByName("description")[0].value;
+       
 
             // Kiểm tra trường rỗng
-            if (userName == "" || password == "" || firstName == "" || lastName == "" || middleName == "" || email == "" || phoneNumber == "" || address == "") {
+            if (categoryName == "" || description == "" ) {
                 swal("Error!", "Please complete all information.", "error");
-                return false;
-            }
-
-            // Kiểm tra first_name, last_name, middle_name chỉ chứa ký tự
-            var nameRegex = /^[a-zA-Z]+$/;
-            if (!nameRegex.test(firstName) || !nameRegex.test(lastName) || !nameRegex.test(middleName)) {
-                swal("Error!", "The 'first_name','middle_name','last_name' field only allows names, numbers are not allowed.", "error");
-                return false;
-            }
-
-            // Kiểm tra mật khẩu có ít nhất 8 ký tự và chứa ít nhất một ký tự chữ
-            if (password.length < 8 || !/[a-zA-Z]/.test(password)) {
-                swal("Error!", "Password must have at least 8 characters and at least one letter character.", "error");
-                return false;
-            }
-
-            // Kiểm tra số điện thoại theo kiểu Việt Nam
-            var phoneRegex = /^(0[1-9])+([0-9]{8})\b$/;
-            if (!phoneRegex.test(phoneNumber)) {
-                swal("Error!", "Invalid phone number.", "error");
-                return false;
-            }
-            if (!validateEmail(email)) {
-                swal("Error!", "Invalid email.", "error");
                 return false;
             }
 
