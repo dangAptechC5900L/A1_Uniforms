@@ -53,16 +53,21 @@ function getAllCustomer($conn)
 
 function getCustomerByUserName($conn)
 {
-	$searchTerm = '%' . $_GET['term'] . '%';
+	if (isset($_GET['term'])) {
+		$searchTerm = '%' . $_GET['term'] . '%';
 
-	$sql = "SELECT * FROM customer WHERE username LIKE ?";
-	$stmt = $conn->prepare($sql);
-	$stmt->bind_param('s', $searchTerm);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	$customerSearch = $result->fetch_all(MYSQLI_ASSOC);
+		$sql = "SELECT * FROM customer WHERE customer_name LIKE ?";
+		$stmt = $conn->prepare($sql);
+		$stmt->bind_param('s', $searchTerm);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$customerSearch = $result->fetch_all(MYSQLI_ASSOC);
 
-	return $customerSearch;
+		return $customerSearch;
+	} else {
+		// Trả về một giá trị mặc định hoặc xử lý khác khi không có 'term' được truyền vào.
+		return array(); // hoặc return null; tùy vào yêu cầu của bạn
+	}
 }
 
 
@@ -155,7 +160,7 @@ $rows = getTotalCustomer($conn);
             Nav header end
         ***********************************-->
 
-		
+
 
 		<!--**********************************
             Header start
@@ -583,7 +588,7 @@ $rows = getTotalCustomer($conn);
 													<label class="form-check-label" for="checkAll"></label>
 												</div>
 											</th>
-											<th>ID</th>
+											<!-- <th>ID</th> -->
 											<th>Username</th>
 											<th>Password</th>
 											<th>FirstName</th>
@@ -605,39 +610,39 @@ $rows = getTotalCustomer($conn);
 											foreach ($customerSearch as $customerSearch) {
 										?>
 												<tr>
-												<td>
-													<div class="form-check custom-checkbox">
-														<input type="checkbox" class="form-check-input" id="customCheckBox2" required="">
-														<label class="form-check-label" for="customCheckBox2"></label>
-													</div>
-												</td>
-												<td><?= $customerSearch['customer_id'] ?></td>
-												<td>
-													<p><?php echo $customerSearch['username'] ?></p>
-												</td>
-												<td>
-													<p><?php echo $customerSearch['password'] ?></p>
-												</td>
-												<td>
-													<p><?php echo $customerSearch['first_name'] ?></p>
-												</td>
-												<td>
-													<p><?php echo $customerSearch['middle_name'] ?></p>
-												</td>
-												<td>
-													<p><?php echo $customerSearch['last_name'] ?></p>
-												</td>
-												<td>
-													<p><?php echo $customerSearch['email'] ?></p>
-												</td>
-												<td>
-													<p><?php echo $customerSearch['phone_number'] ?></p>
-												</td>
-												<td>
-													<p><?php echo $customerSearch['address'] ?></p>
-												</td>
+													<td>
+														<div class="form-check custom-checkbox">
+															<input type="checkbox" class="form-check-input" id="customCheckBox2" required="">
+															<label class="form-check-label" for="customCheckBox2"></label>
+														</div>
+													</td>
+													<!-- <td><?= $customerSearch['customer_id'] ?></td> -->
+													<td>
+														<p><?php echo $customerSearch['customer_name'] ?></p>
+													</td>
+													<td>
+														<p><?php echo $customerSearch['password'] ?></p>
+													</td>
+													<td>
+														<p><?php echo $customerSearch['first_name'] ?></p>
+													</td>
+													<td>
+														<p><?php echo $customerSearch['middle_name'] ?></p>
+													</td>
+													<td>
+														<p><?php echo $customerSearch['last_name'] ?></p>
+													</td>
+													<td>
+														<p><?php echo $customerSearch['email'] ?></p>
+													</td>
+													<td>
+														<p><?php echo $customerSearch['phone_number'] ?></p>
+													</td>
+													<td>
+														<p><?php echo $customerSearch['address'] ?></p>
+													</td>
 
-												<!-- <td>
+													<!-- <td>
 													<div class="btn-group">
 														<?php if ($customer['isDeleted'] == 0) : ?>
 															<button id="activeBtn_<?php echo $customer['customer_id']; ?>" class="btn btn-success rounded" onclick="changeStatus(<?php echo $customer['customer_id']; ?>, 1)">Active</button>
@@ -646,23 +651,23 @@ $rows = getTotalCustomer($conn);
 														<?php endif; ?>
 													</div>
 												</td> -->
-												<td>
-													<div class="btn-group">
-														<form action="customer-list.php" method="post">
-															<button type="submit" name="customer_id" value="<?php echo $customerSearch['customer_id']; ?>" class="btn <?php echo $customerSearch['isDeleted'] == 0 ? 'btn-success' : 'btn-secondary'; ?> rounded">
-																<?php echo $customerSearch['isDeleted'] == 0 ? "Active" : "Inactive"; ?>
-															</button>
-														</form>
-													</div>
+													<td>
+														<div class="btn-group">
+															<form action="customer-list.php" method="post">
+																<button type="submit" name="customer_id" value="<?php echo $customerSearch['customer_id']; ?>" class="btn <?php echo $customerSearch['isDeleted'] == 0 ? 'btn-success' : 'btn-secondary'; ?> rounded">
+																	<?php echo $customerSearch['isDeleted'] == 0 ? "Active" : "Inactive"; ?>
+																</button>
+															</form>
+														</div>
 
-												</td>
-												<td>
+													</td>
+													<td>
 
-													<div class="d-flex">
-														<a href="edit-customer.php?customer_id=<?php echo $customerSearch['customer_id']; ?>" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>
-														
-													</div>
-												</td>
+														<div class="d-flex">
+															<a href="edit-customer.php?customer_id=<?php echo $customerSearch['customer_id']; ?>" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>
+
+														</div>
+													</td>
 												</tr>
 											<?php
 											}
@@ -671,39 +676,39 @@ $rows = getTotalCustomer($conn);
 											foreach ($customers as $customer) {
 											?>
 												<tr>
-												<td>
-													<div class="form-check custom-checkbox">
-														<input type="checkbox" class="form-check-input" id="customCheckBox2" required="">
-														<label class="form-check-label" for="customCheckBox2"></label>
-													</div>
-												</td>
-												<td><?= $customer['customer_id'] ?></td>
-												<td>
-													<p><?php echo $customer['username'] ?></p>
-												</td>
-												<td>
-													<p><?php echo $customer['password'] ?></p>
-												</td>
-												<td>
-													<p><?php echo $customer['first_name'] ?></p>
-												</td>
-												<td>
-													<p><?php echo $customer['middle_name'] ?></p>
-												</td>
-												<td>
-													<p><?php echo $customer['last_name'] ?></p>
-												</td>
-												<td>
-													<p><?php echo $customer['email'] ?></p>
-												</td>
-												<td>
-													<p><?php echo $customer['phone_number'] ?></p>
-												</td>
-												<td>
-													<p><?php echo $customer['address'] ?></p>
-												</td>
+													<td>
+														<div class="form-check custom-checkbox">
+															<input type="checkbox" class="form-check-input" id="customCheckBox2" required="">
+															<label class="form-check-label" for="customCheckBox2"></label>
+														</div>
+													</td>
+													<!-- <td><?= $customer['customer_id'] ?></td> -->
+													<td>
+														<p><?php echo $customer['customer_name'] ?></p>
+													</td>
+													<td>
+														<p><?php echo $customer['password'] ?></p>
+													</td>
+													<td>
+														<p><?php echo $customer['first_name'] ?></p>
+													</td>
+													<td>
+														<p><?php echo $customer['middle_name'] ?></p>
+													</td>
+													<td>
+														<p><?php echo $customer['last_name'] ?></p>
+													</td>
+													<td>
+														<p><?php echo $customer['email'] ?></p>
+													</td>
+													<td>
+														<p><?php echo $customer['phone_number'] ?></p>
+													</td>
+													<td>
+														<p><?php echo $customer['address'] ?></p>
+													</td>
 
-												<!-- <td>
+													<!-- <td>
 													<div class="btn-group">
 														<?php if ($customer['isDeleted'] == 0) : ?>
 															<button id="activeBtn_<?php echo $customer['customer_id']; ?>" class="btn btn-success rounded" onclick="changeStatus(<?php echo $customer['customer_id']; ?>, 1)">Active</button>
@@ -712,23 +717,23 @@ $rows = getTotalCustomer($conn);
 														<?php endif; ?>
 													</div>
 												</td> -->
-												<td>
-													<div class="btn-group">
-														<form action="customer-list.php" method="post">
-															<button type="submit" name="customer_id" value="<?php echo $customer['customer_id']; ?>" class="btn <?php echo $customer['isDeleted'] == 0 ? 'btn-success' : 'btn-secondary'; ?> rounded">
-																<?php echo $customer['isDeleted'] == 0 ? "Active" : "Inactive"; ?>
-															</button>
-														</form>
-													</div>
+													<td>
+														<div class="btn-group">
+															<form action="customer-list.php" method="post">
+																<button type="submit" name="customer_id" value="<?php echo $customer['customer_id']; ?>" class="btn <?php echo $customer['isDeleted'] == 0 ? 'btn-success' : 'btn-secondary'; ?> rounded">
+																	<?php echo $customer['isDeleted'] == 0 ? "Active" : "Inactive"; ?>
+																</button>
+															</form>
+														</div>
 
-												</td>
-												<td>
+													</td>
+													<td>
 
-													<div class="d-flex">
-														<a href="edit-customer.php?customer_id=<?php echo $customer['customer_id']; ?>" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>
-														
-													</div>
-												</td>
+														<div class="d-flex">
+															<a href="edit-customer.php?customer_id=<?php echo $customer['customer_id']; ?>" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>
+
+														</div>
+													</td>
 												</tr>
 										<?php
 											}

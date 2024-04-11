@@ -53,16 +53,21 @@ function getAllCategory($conn)
 
 function getCategoryByName($conn)
 {
-	$searchTerm = '%' . $_GET['term'] . '%';
+	if (isset($_GET['term'])) {
+		$searchTerm = '%' . $_GET['term'] . '%';
 
-	$sql = "SELECT * FROM category WHERE name LIKE ?";
-	$stmt = $conn->prepare($sql);
-	$stmt->bind_param('s', $searchTerm);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	$categorySearch = $result->fetch_all(MYSQLI_ASSOC);
+		$sql = "SELECT * FROM category WHERE name LIKE ?";
+		$stmt = $conn->prepare($sql);
+		$stmt->bind_param('s', $searchTerm);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$categorySearch = $result->fetch_all(MYSQLI_ASSOC);
 
-	return $categorySearch;
+		return $categorySearch;
+	} else {
+		// Trả về một giá trị mặc định hoặc xử lý khác khi không có 'term' được truyền vào.
+		return array(); // hoặc return null; tùy vào yêu cầu của bạn
+	}
 }
 
 
@@ -291,73 +296,8 @@ $rows = getTotalCategory($conn);
 							<li><a href="chat.html">Chat</a></li>
 						</ul>
 					</li>
-					<li>
-						<a class="has-arrow ai-icon" href="javascript:void(0);" aria-expanded="false">
-							<i class="flaticon-381-television"></i>
-							<span class="nav-text">Apps</span>
-						</a>
-						<ul aria-expanded="false">
-							<li><a href="app-profile.html">Profile</a></li>
-							<li><a href="edit-profile.html">Edit Profile <span class="badge badge-xs badge-danger ms-2">New</span></a></li>
-							<li><a class="has-arrow" href="javascript:void(0);" aria-expanded="false">Email</a>
-								<ul aria-expanded="false">
-									<li><a href="email-compose.html">Compose</a></li>
-									<li><a href="email-inbox.html">Inbox</a></li>
-									<li><a href="email-read.html">Read</a></li>
-								</ul>
-							</li>
-							<li><a href="app-calender.html">Calendar</a></li>
-							<li><a class="has-arrow" href="javascript:void(0);" aria-expanded="false">Shop</a>
-								<ul aria-expanded="false">
-									<li><a href="ecom-product-grid.html">Product Grid</a></li>
-									<li><a href="ecom-product-list.html">Product List</a></li>
-									<li><a href="ecom-product-detail.html">Product Details</a></li>
-									<li><a href="ecom-product-order.html">Order</a></li>
-									<li><a href="ecom-checkout.html">Checkout</a></li>
-									<li><a href="ecom-invoice.html">Invoice</a></li>
-									<li><a href="ecom-customers.html">Customers</a></li>
-								</ul>
-							</li>
-						</ul>
-					</li>
-					<li><a class="has-arrow ai-icon" href="javascript:void(0);" aria-expanded="false">
-							<i class="flaticon-381-controls-3"></i>
-							<span class="nav-text">Charts</span>
-						</a>
-						<ul aria-expanded="false">
-							<li><a href="chart-flot.html">Flot</a></li>
-							<li><a href="chart-morris.html">Morris</a></li>
-							<li><a href="chart-chartjs.html">Chartjs</a></li>
-							<li><a href="chart-chartist.html">Chartist</a></li>
-							<li><a href="chart-sparkline.html">Sparkline</a></li>
-							<li><a href="chart-peity.html">Peity</a></li>
-						</ul>
-					</li>
-					<li><a class="has-arrow ai-icon" href="javascript:void(0);" aria-expanded="false">
-							<i class="flaticon-381-internet"></i>
-							<span class="nav-text">Bootstrap</span>
-						</a>
-						<ul aria-expanded="false">
-							<li><a href="ui-accordion.html">Accordion</a></li>
-							<li><a href="ui-alert.html">Alert</a></li>
-							<li><a href="ui-badge.html">Badge</a></li>
-							<li><a href="ui-button.html">Button</a></li>
-							<li><a href="ui-modal.html">Modal</a></li>
-							<li><a href="ui-button-group.html">Button Group</a></li>
-							<li><a href="ui-list-group.html">List Group</a></li>
-							<li><a href="ui-media-object.html">Media Object</a></li>
-							<li><a href="ui-card.html">Cards</a></li>
-							<li><a href="ui-carousel.html">Carousel</a></li>
-							<li><a href="ui-dropdown.html">Dropdown</a></li>
-							<li><a href="ui-popover.html">Popover</a></li>
-							<li><a href="ui-progressbar.html">Progressbar</a></li>
-							<li><a href="ui-tab.html">Tab</a></li>
-							<li><a href="ui-typography.html">Typography</a></li>
-							<li><a href="ui-pagination.html">Pagination</a></li>
-							<li><a href="ui-grid.html">Grid</a></li>
 
-						</ul>
-					</li>
+
 					<li><a class="has-arrow ai-icon" href="javascript:void(0);" aria-expanded="false">
 							<i class="flaticon-381-heart"></i>
 							<span class="nav-text">Plugins</span>

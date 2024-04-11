@@ -9,26 +9,25 @@ addCustomers($conn);
 function addCustomers($conn)
 {
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-		$category_name = $_POST["name"];
+		$about_title = $_POST["title"];
 		$description = $_POST["description"];
 
-		if (empty($category_name) || empty($description)) {
+		if (empty($about_title) || empty($description)) {
 			echo "Please fill in all information.";
 			return;
 		}
 
-		$parent_id=0;
-		$isDeleted = false;
-		$sql = "INSERT INTO category (name,  description, isDeleted, parent_id)
-        VALUES (?, ?, ?, ?)";
+	
+		$sql = "INSERT INTO about_us (title,  description)
+        VALUES (?, ?)";
 		$stmt = $conn->prepare($sql);
-		$stmt->bind_param("ssii", $category_name, $description, $isDeleted, $parent_id);
+		$stmt->bind_param("ss", $about_title, $description);
 
 
 		// Thực hiện truy vấn
 		if ($stmt->execute()) {
-			echo "Add Category Success";
-			header("Location:category-list.php");
+			echo "Add About_Us Success";
+			header("Location:about_us-list.php");
 		} else {
 			echo "Error! " . $stmt->error;
 		}
@@ -45,7 +44,7 @@ function addCustomers($conn)
 
 <head>
 	<!-- Title -->
-	<title>A-1 uniforms - home</title>
+	<title>A-1 uniforms</title>
 
 	<!-- Meta -->
 	<meta charset="utf-8">
@@ -128,7 +127,7 @@ function addCustomers($conn)
 					<div class="collapse navbar-collapse justify-content-between">
 						<div class="header-left">
 							<div class="dashboard_bar">
-								Add Category
+								Add About_Us
 							</div>
 						</div>
 
@@ -478,25 +477,25 @@ function addCustomers($conn)
 					<div class="col-xl-12">
 						<div class="card  card-bx m-b30">
 							<div class="card-header bg-primary">
-								<h6 class="title text-white">Create Category</h6>
+								<h6 class="title text-white">Create Posts</h6>
 
 							</div>
-							<form class="profile-form" action="add-category.php" method="post" onsubmit="return validateForm();">
+							<form class="profile-form" action="add-about_us.php" method="post" onsubmit="return validateForm();">
 								<div class="card-body">
 									<div class="row">
 										<div class="col-sm-12 mb-3">
-											<label class=" form-label required">Name</label>
-											<input type="text" name="name" class="form-control" placeholder="Enter name category..." required="">
+											<label class=" form-label required">Title</label>
+											<input type="text" name="title" class="form-control" placeholder="Enter name title...">
 										</div>
-										<div class="col-sm-6 mb-3">
+										<div class="col-sm-12 mb-3">
 											<label class=" form-label required">Description</label>
-											<input type="text" name="description" class="form-control" placeholder="Enter description..." required>
+											<input type="text" name="description" class="form-control" placeholder="Enter description...">
 										</div>
 
 									</div>
 								</div>
 								<div class="card-footer justify-content-end">
-									<button class="btn btn-primary">Create Category</button>
+									<button class="btn btn-primary">Create Posts</button>
 								</div>
 							</form>
 						</div>
@@ -558,47 +557,26 @@ function addCustomers($conn)
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 	<script>
 		function validateForm() {
-			var userName = document.getElementsByName("userName")[0].value;
-			var password = document.getElementsByName("customer_password")[0].value;
-			var firstName = document.getElementsByName("firstName")[0].value;
-			var lastName = document.getElementsByName("lastName")[0].value;
-			var middleName = document.getElementsByName("middleName")[0].value;
-			var email = document.getElementsByName("email")[0].value;
-			var phoneNumber = document.getElementsByName("phoneNumber")[0].value;
-			var address = document.getElementsByName("address")[0].value;
+    var about_title = document.getElementsByName("title")[0].value;
+    var description = document.getElementsByName("description")[0].value;
 
-			// Kiểm tra trường rỗng
-			if (userName == "" || password == "" || firstName == "" || lastName == "" || middleName == "" || email == "" || phoneNumber == "" || address == "") {
-				swal("Error!", "Please complete all information.", "error");
-				return false;
-			}
+    // Kiểm tra nếu cả hai trường đều rỗng
+    if (about_title == "" && description == "") {
+        swal("Error!", "Please complete all information.", "error");
+        return false;
+    }
 
-			// Kiểm tra first_name, last_name, middle_name chỉ chứa ký tự
-			var nameRegex = /^[a-zA-Z]+$/;
-			if (!nameRegex.test(firstName) || !nameRegex.test(lastName) || !nameRegex.test(middleName)) {
-				swal("Error!", "The 'first_name','middle_name','last_name' field only allows names, numbers are not allowed.", "error");
-				return false;
-			}
+    // Kiểm tra nếu chỉ có một trong hai trường rỗng
+    if (about_title == "" || description == "") {
+        swal("Error!", "Please complete all information.", "error");
+        return false;
+    }
 
-			// Kiểm tra mật khẩu có ít nhất 8 ký tự và chứa ít nhất một ký tự chữ
-			if (password.length < 8 || !/[a-zA-Z]/.test(password)) {
-				swal("Error!", "Password must have at least 8 characters and at least one letter character.", "error");
-				return false;
-			}
+    // Nếu cả hai trường đều không rỗng
+    // Tiến hành các xử lý khác hoặc trả về true
+}
 
-			// Kiểm tra số điện thoại theo kiểu Việt Nam
-			var phoneRegex = /^(0[1-9])+([0-9]{8})\b$/;
-			if (!phoneRegex.test(phoneNumber)) {
-				swal("Error!", "Invalid phone number.", "error");
-				return false;
-			}
-			if (!validateEmail(email)) {
-				swal("Error!", "Invalid email.", "error");
-				return false;
-			}
-
-			return true;
-		}
+		
 	</script>
 
 
