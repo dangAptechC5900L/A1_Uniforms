@@ -14,7 +14,7 @@ mysqli_close($conn);
 
 function searchProductByName($conn, $searchTerm)
 {
-    $sql = "SELECT * FROM product WHERE name LIKE ?";
+    $sql = "SELECT * FROM product WHERE product_name LIKE ?";
     $stmt = $conn->prepare($sql);
     $searchTerm = '%' . $searchTerm . '%';
     $stmt->bind_param("s", $searchTerm);
@@ -239,7 +239,7 @@ function searchProductByName($conn, $searchTerm)
                                         <div class="single_product">
                                             <div class="product_thumb">
                                                 <a class="primary_img" href="product-details.php?product_id=<?php echo $product['product_id']; ?>">
-                                                    <img src="<?php echo $product['img']; ?>" alt="Product Image">
+                                                    <img src="<?php echo $product['avata_product']; ?>" alt="Product Image">
                                                 </a>
                                                 <!-- <a class="secondary_img" href="product-details.html"><img src="assets/img/product/product16.jpg" alt=""></a> -->
 
@@ -247,14 +247,14 @@ function searchProductByName($conn, $searchTerm)
                                             </div>
 
                                             <div class="product_content grid_content">
-                                                <h3><a href="product-details.php?product_id=<?php echo $product['product_id']; ?> "><?php echo $product['name']; ?></a></h3>
+                                                <h3><a href="product-details.php?product_id=<?php echo $product['product_id']; ?> "><?php echo $product['product_name']; ?></a></h3>
                                                 <span class="current_price">$<?php echo $product['price']; ?></span>
                                                 <!-- <span class="old_price"><?php echo $product['old_price']; ?></span> -->
                                             </div>
 
 
                                             <div class="product_content list_content">
-                                                <h3><a href="product-details.php"><?php echo $product['name']; ?></a></h3>
+                                                <h3><a href="product-details.php"><?php echo $product['product_name']; ?></a></h3>
                                                 <div class="product_ratting">
                                                     <ul>
                                                         <li><a href="#"><i class="fa fa-star"></i></a></li>

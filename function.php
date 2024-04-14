@@ -6,7 +6,8 @@ function initConnection()
         $db_host = 'localhost:3308';
         $db_user = 'root';
         $db_password = '';
-        $db_name = 'sem1_group2_final';
+        // $db_name = 'sem1_group2_final';
+        $db_name = 'a1_uniforms';
         $conn = mysqli_connect($db_host, $db_user, $db_password, $db_name);
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);

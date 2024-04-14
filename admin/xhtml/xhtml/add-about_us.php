@@ -4,9 +4,9 @@ include '../../../function.php';
 
 $conn = initConnection();
 
-addCustomers($conn);
+addAboutUs($conn);
 
-function addCustomers($conn)
+function addAboutUs($conn)
 {
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$about_title = $_POST["title"];

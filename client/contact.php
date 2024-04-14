@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $errors[] = "Phone number must start with 0 and be followed by 9 digits";
     }
     if (count($errors) == 0) {
-        $query_string = "INSERT INTO contact (username, email, subject, phone_number, message ) VALUES (?, ?, ?, ?, ?)";
+        $query_string = "INSERT INTO contact (fullname, email, subject, phone_number, message ) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($query_string);
         $stmt->bind_param('sssds', $username, $email, $subject, $phone, $message);
         $stmt->execute();
@@ -97,16 +97,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <li class="menu-item-has-children">
                                     <a href="shop.php">Shop</a>
                                     <ul class="sub-menu">
-                                        <li><a href="shop.php#Shirts">Shirts</a></li>
-                                        <li><a href="shop.php#Skirts">Skirts</a></li>
-                                        <li><a href="shop.php#Frocks">Frocks</a></li>
-                                        <li><a href="shop.php#P-T-T-shirts">P.T.T.shirts</a></li>
-                                        <li><a href="shop.php#P-T-shorts">P.T.shorts</a></li>
-                                        <li><a href="shop.php#P-T-track-pants">P.T.track-pants</a></li>
-                                        <li><a href="shop.php#Belts">Belts</a></li>
-                                        <li><a href="shop.php#Ties">Ties</a></li>
-                                        <li><a href="shop.php#Logos">Logos</a></li>
-                                        <li><a href="shop.php#Socks">Socks</a></li>
+                                        <li><a href="shop.html">shop</a></li>
+                                        <li><a href="productByCategory.php?category_id=1">Shirts</a></li>
+                                        <li><a href="productByCategory.php?category_id=2">Skirts</a></li>
+                                        <li><a href="productByCategory.php?category_id=3">Frocks </a></li>
+                                        <li><a href="productByCategory.php?category_id=4"> P.T. T-shirts</a></li>
+                                        <li><a href="productByCategory.php?category_id=5">P.T. shorts</a></li>
+                                        <li><a href="productByCategory.php?category_id=6">P.T. track pants</a></li>
+                                        <li><a href="productByCategory.php?category_id=7">Belts</a></li>
+                                        <li><a href="productByCategory.php?category_id=8">Ties</a></li>
+                                        <li><a href="productByCategory.php?category_id=9">Logos</a></li>
+                                        <li><a href="productByCategory.php?category_id=10">Socks</a></li>
                                     </ul>
                                 </li>
                                 <li class="menu-item-has-children">
@@ -174,16 +175,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             </li>
                                             <li><a href="shop.php">Shop<i class="fa fa-angle-down"></i></a>
                                                 <ul class="sub_menu pages">
-                                                    <li><a href="shop.php#Shirts">Shirts</a></li>
-                                                    <li><a href="shop.php#Skirts">Skirts</a></li>
-                                                    <li><a href="shop.php#Frocks">Frocks</a></li>
-                                                    <li><a href="shop.php#P-T-T-shirts">P.T.T.shirts</a></li>
-                                                    <li><a href="shop.php#P-T-shorts">P.T.shorts</a></li>
-                                                    <li><a href="shop.php#P-T-track-pants">P.T.track-pants</a></li>
-                                                    <li><a href="shop.php#Belts">Belts</a></li>
-                                                    <li><a href="shop.php#Ties">Ties</a></li>
-                                                    <li><a href="shop.php#Logos">Logos</a></li>
-                                                    <li><a href="shop.php#Socks">Socks</a></li>
+
+                                                    <li><a href="productByCategory.php?category_id=1">Shirts</a></li>
+                                                    <li><a href="productByCategory.php?category_id=2">Skirts</a></li>
+                                                    <li><a href="productByCategory.php?category_id=3">Frocks </a></li>
+                                                    <li><a href="productByCategory.php?category_id=4"> P.T. T-shirts</a></li>
+                                                    <li><a href="productByCategory.php?category_id=5">P.T. shorts</a></li>
+                                                    <li><a href="productByCategory.php?category_id=6">P.T. track pants</a></li>
+                                                    <li><a href="productByCategory.php?category_id=7">Belts</a></li>
+                                                    <li><a href="productByCategory.php?category_id=8">Ties</a></li>
+                                                    <li><a href="productByCategory.php?category_id=9">Logos</a></li>
+                                                    <li><a href="productByCategory.php?category_id=10">Socks</a></li>
                                                 </ul>
                                             </li>
                                             <li class="active"><a href="about.php">About us</a></li>

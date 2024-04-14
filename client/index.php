@@ -1,3 +1,28 @@
+<?php
+session_start();
+include('../function.php');
+$conn = initConnection();
+
+function getCategoryByID($conn)
+{
+    $sql = "SELECT * FROM category";
+    $result = $conn->query($sql);
+
+    $categories = []; // Khởi tạo mảng chứa dữ liệu
+
+    if ($result->num_rows > 0) {
+        // Duyệt qua từng hàng kết quả và lưu vào mảng
+        while ($row = $result->fetch_assoc()) {
+            $categories[] = $row; // Thêm dữ liệu của hàng vào mảng categories
+        }
+    }
+
+    return $categories; // Trả về mảng categories
+}
+
+$categories=getCategoryByID($conn);
+
+?>
 <!doctype html>
 <html class="no-js" lang="en">
 
@@ -7,6 +32,7 @@
     <title>A-1 uniforms - home</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/img/favicon.svg">
     <link rel="stylesheet" href="../assets/css/plugins.css">
     <link rel="stylesheet" href="../assets/css/style.css">
@@ -34,9 +60,15 @@
                         <div class="cart_area">
                             <div class="middel_links">
                                 <ul>
-                                    <li><a href="login.php">Login</a></li>
-                                    <li>/</li>
-                                    <li><a href="register.php">Register</a></li>
+                                    <?php
+                                    if (isset($_SESSION['customer_name'])) {
+                                        echo '<li><i class="fa-solid fa-user"></i>  &nbsp;' . $_SESSION['customer_name'] . ' &nbsp; &nbsp;<a href="logout.php">Logout</a></li>';
+                                    } else {
+                                        echo '<li><a href="login.php">Login</a></li>';
+                                        echo '<li>/</li>';
+                                        echo '<li><a href="register.php">Register</a></li>';
+                                    }
+                                    ?>
                                 </ul>
                             </div>
                         </div>
@@ -52,7 +84,6 @@
                                 <li class="menu-item-has-children">
                                     <a href="shop.php">Shop</a>
                                     <ul class="sub-menu">
-                                        <li><a href="shop.html">shop</a></li>
                                         <li><a href="productByCategory.php?category_id=1">Shirts</a></li>
                                         <li><a href="productByCategory.php?category_id=2">Skirts</a></li>
                                         <li><a href="productByCategory.php?category_id=3">Frocks </a></li>
@@ -74,7 +105,7 @@
                             </ul>
                         </div>
                         <div class="offcanvas_footer">
-                            <span><a href="#"><i class="fa fa-envelope-o"></i> info@yourdomain.com</a></span>
+                            <span><a href="mailto:a1uniforms@gmail.com"><i class="fa fa-envelope-o"></i> &nbsp; a1uniforms@gmail.com</a></span>
                             <ul>
                                 <li class="facebook"><a href="#"><i class="fa fa-facebook"></i></a></li>
                                 <li class="twitter"><a href="#"><i class="fa fa-twitter"></i></a></li>
@@ -111,9 +142,15 @@
                         <div class="cart_area">
                             <div class="middel_links">
                                 <ul>
-                                    <li><a href="login.php">Login</a></li>
-                                    <li>/</li>
-                                    <li><a href="register.php">Register</a></li>
+                                    <?php
+                                    if (isset($_SESSION['customer_name'])) {
+                                        echo '<li><i class="fa-solid fa-user"></i>  &nbsp;' . $_SESSION['customer_name'] . ' &nbsp; &nbsp;<a href="logout.php">Logout</a></li>';
+                                    } else {
+                                        echo '<li><a href="login.php">Login</a></li>';
+                                        echo '<li>/</li>';
+                                        echo '<li><a href="register.php">Register</a></li>';
+                                    }
+                                    ?>
                                 </ul>
                             </div>
                         </div>
@@ -133,19 +170,11 @@
                                         <ul>
                                             <li><a href="index.php">Home</a>
                                             </li>
-                                            <li><a href="shop.php">Shop<i class="fa fa-angle-down"></i></a>
+                                            <li><a>Shop<i class="fa fa-angle-down"></i></a>
                                                 <ul class="sub_menu pages">
-                                                    <li><a href="shop.html">shop</a></li>
-                                                    <li><a href="productByCategory.php?category_id=1">Shirts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=2">Skirts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=3">Frocks </a></li>
-                                                    <li><a href="productByCategory.php?category_id=4"> P.T. T-shirts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=5">P.T. shorts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=6">P.T. track pants</a></li>
-                                                    <li><a href="productByCategory.php?category_id=7">Belts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=8">Ties</a></li>
-                                                    <li><a href="productByCategory.php?category_id=9">Logos</a></li>
-                                                    <li><a href="productByCategory.php?category_id=10">Socks</a></li>
+                                                    <?php foreach($categories as $category) :?>
+                                                    <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
+                                                    <?php endforeach; ?>
                                                 </ul>
                                             </li>
                                             <li class="active"><a href="about.php">About us</a></li>

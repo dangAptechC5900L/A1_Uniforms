@@ -6,6 +6,7 @@ $errors = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
+    $remember = isset($_POST['remember']) ? $_POST['remember'] : '';
     if (empty($email)) {
         $errors[] = "Username must be provided";
     }
@@ -20,19 +21,55 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->execute();
         $result = $stmt->get_result();
         if ($result->num_rows > 0) {
-            echo "<script>alert('Login successfully');</script>";
+            session_start();
+            $_SESSION['login'] = TRUE;
+            $row = $result->fetch_assoc(); // Fetch the row once
+            $_SESSION['customer_name'] = $row['customer_name'];
+            $_SESSION['customer_id'] = $row['customer_id'];
+            if ($remember == 'on') {
+                $expire = time() + 3600 * 24 * 30; 
+                setcookie('email', $email, $expire);
+                setcookie('password', $password, $expire);
+            }
+            echo "<script>alert('Login Successful');</script>";
+            echo "<script>window.location.href = 'index.php';</script>";
+            exit;
         } else {
-            echo "<script>alert('Invalid username or password');</script>";
+            $errors[] = "Invalid username or password";
         }
-    } else {
-        $error_message = "";
-        foreach ($errors as $error) {
-            $error_message .= $error . "\\n";
-        }
-        echo "<script>alert('" . $error_message . "');</script>";
     }
 }
+if (isset($_COOKIE['email']) && isset($_COOKIE['password'])) {
+    $email = $_COOKIE['email'];
+    $password = $_COOKIE['password'];
+    echo "<script>
+            document.getElementById('remember').checked = true;
+            document.getElementsByName('email')[0].value = '$email';
+            document.getElementsByName('password')[0].value = '$password';
+          </script>";
+}
+
+function getCategoryByID($conn)
+{
+    $sql = "SELECT * FROM category";
+    $result = $conn->query($sql);
+
+    $categories = []; // Khởi tạo mảng chứa dữ liệu
+
+    if ($result->num_rows > 0) {
+        // Duyệt qua từng hàng kết quả và lưu vào mảng
+        while ($row = $result->fetch_assoc()) {
+            $categories[] = $row; // Thêm dữ liệu của hàng vào mảng categories
+        }
+    }
+
+    return $categories; // Trả về mảng categories
+}
+
+$categories=getCategoryByID($conn);
+
 ?>
+
 
 <!doctype html>
 <html class="no-js" lang="en">
@@ -43,18 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Login</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="../assets/img/favicon.svg">
-
-
-    <!-- CSS 
-    ========================= -->
-
-
-    <!-- Plugins CSS -->
     <link rel="stylesheet" href="../assets/css/plugins.css">
-
-    <!-- Main Style CSS -->
     <link rel="stylesheet" href="../assets/css/style.css">
 
 </head>
@@ -110,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </ul>
                         </div>
                         <div class="offcanvas_footer">
-                            <span><a href="#"><i class="fa fa-envelope-o"></i> info@yourdomain.com</a></span>
+                            <span><a href="mailto:a1uniforms@gmail.com"><i class="fa fa-envelope-o"></i> &nbsp; a1uniforms@gmail.com</a></span>
                             <ul>
                                 <li class="facebook"><a href="#"><i class="fa fa-facebook"></i></a></li>
                                 <li class="twitter"><a href="#"><i class="fa fa-twitter"></i></a></li>
@@ -147,9 +174,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
         </div>
-        <!--header middel end-->
-
-        <!--header bottom satrt-->
         <div class="header_bottom sticky-header">
             <div class="container">
                 <div class="row align-items-center">
@@ -190,7 +214,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
         </div>
-        <!--header bottom end-->
     </header>
 
     <div class="breadcrumbs_area other_bread">
@@ -210,49 +233,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
-    <!--breadcrumbs area end-->
-
-
-    <!-- customer login start -->
     <div class="customer_login">
         <div class="container">
             <div class="row">
-                <!--login area start-->
                 <div class="col-8">
-                    <div class="account_form">
+                    <div class="account_form ">
                         <h2>login</h2>
                         <form action="login.php" method="post">
                             <p>
                                 <label>Email <span>*</span></label>
-                                <input type="email" name="email" required>
+                                <input style="margin-top: 6px;" type="email" id="email" name="email" required>
                             </p>
                             <p>
-                                <label>Passwords <span>*</span></label>
-                                <input type="password" name="password" required>
+                                <label>Password <span>*</span></label>
+                                <input style="margin-top: 6px;" type="password" id="password" name="password" required>
                             </p>
                             <div class="login_submit">
                                 <div>
                                     <a href="reset_password.php">Lost your password?</a>
                                     <label for="remember">
-                                        <input id="remember" type="checkbox">
+                                        <input id="remember" type="checkbox" name="remember">
                                         Remember me
                                     </label>
                                 </div>
-
-                                <button type="submit" name="submit">login</button>
-
+                                <button type="submit" name="submit">Login</button>
                             </div>
-
                         </form>
                     </div>
                 </div>
-                <!--login area start-->
             </div>
         </div>
     </div>
-    <!-- customer login end -->
-
-    <!--footer area start-->
     <footer class="footer_widgets other_widgets">
         <div class="footer_top">
             <div class="container">
@@ -340,16 +351,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </footer>
-    <!--footer area end-->
-
-    <!-- JS
-============================================ -->
-
-    <!-- Plugins JS -->
-    <!-- <script src="assets/js/plugins.js"></script> -->
-
-    <!-- Main JS -->
-    <!-- <script src="assets/js/main.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        Swal.fire({
+            title: "Registration successful!",
+            showCancelButton: false,
+            showConfirmButton: true,
+            confirmButtonText: "OK",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.close();
+            }
+        });
+    </script> -->
+    <script src="assets/js/plugins.js"></script>
+    <script src="assets/js/main.js"></script>
 
 
 

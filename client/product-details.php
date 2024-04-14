@@ -1,8 +1,19 @@
 <?php
+session_start();
 include("../function.php");
 
 // Khởi tạo kết nối đến cơ sở dữ liệu
 $conn = initConnection();
+
+if(isset($_SESSION['customer_id'])) {
+    // Lấy customer_id từ phiên
+    $customer_id = $_SESSION['customer_id'];
+} else {
+    // Nếu người dùng chưa đăng nhập, có thể xử lý ở đây hoặc redirect về trang đăng nhập
+    // Ví dụ:
+    header("Location: login.php");
+    exit();
+}
 
 // Lấy giá trị category_id từ tham số truy vấn
 $category_id = $_GET['category_id'];
@@ -25,7 +36,7 @@ $totalFeedbacks = getTotalFeedback($conn, $product_id);
 
 $avgFeedbacks = getAVGStarFeedback($conn, $product_id);
 
-addFeedbackProduct($conn, $product_id, $category_id);
+addFeedbackProduct($conn, $product_id, $category_id,$customer_id);
 
 // Đóng kết nối
 mysqli_close($conn);
@@ -62,7 +73,7 @@ function getCategoryName($conn, $category_id)
     return $categoryName;
 }
 
-function addFeedbackProduct($conn, $product_id, $category_id)
+function addFeedbackProduct($conn, $product_id, $category_id,$customer_id)
 {
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // $name=$_POST['author'];
@@ -70,7 +81,7 @@ function addFeedbackProduct($conn, $product_id, $category_id)
         $description = $_POST['comment'];
         $star_rating = $_POST['star_rating']; // Lấy giá trị số sao từ form
         $feedbackDate = date('Y-m-d H:i:s'); // Lấy thời gian hiện tại
-        $customer_id = 1;
+ 
 
         if (empty($description) && empty($star_rating)) {
             echo 'Vui lòng nhập nội dung feedback và đánh giá sao!';
@@ -92,10 +103,11 @@ function addFeedbackProduct($conn, $product_id, $category_id)
 
 function getFeedbackProductById($conn, $product_id)
 {
-    $sql = "SELECT f.*, c.username AS customer_name 
-            FROM feedback f 
-            INNER JOIN customer c ON f.customer_id = c.customer_id
-            WHERE f.product_id=?";
+    $sql = "SELECT f.*, c.customer_name AS customer_name
+        FROM feedback f
+        INNER JOIN customer c ON f.customer_id = c.customer_id
+        WHERE f.product_id = ?";
+
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $product_id);
     $stmt->execute();
@@ -144,6 +156,7 @@ function getAVGStarFeedback($conn, $product_id)
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="../assets/img/favicon.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- CSS 
     ========================= -->
@@ -236,16 +249,20 @@ function getAVGStarFeedback($conn, $product_id)
                     </div>
                     <div class="offcanvas_menu_wrapper">
 
-                        <div class="cart_area">
+                    <div class="cart_area">
                             <div class="middel_links">
                                 <ul>
-                                    <li><a href="login.html">Login</a></li>
-                                    <li>/</li>
-                                    <li><a href="login.html">Register</a></li>
+                                    <?php
+                                    if (isset($_SESSION['customer_name'])) {
+                                        echo '<li><i class="fa-solid fa-user"></i>  &nbsp;' . $_SESSION['customer_name'] . ' &nbsp; &nbsp;<a href="logout.php">Logout</a></li>';
+                                    } else {
+                                        echo '<li><a href="login.php">Login</a></li>';
+                                        echo '<li>/</li>';
+                                        echo '<li><a href="register.php">Register</a></li>';
+                                    }
+                                    ?>
                                 </ul>
-
                             </div>
-
                         </div>
                         <div class="contact_phone">
                             <p>Call Free Support: <a href="tel:01234567890">01234567890</a></p>
@@ -368,6 +385,23 @@ function getAVGStarFeedback($conn, $product_id)
                             </form>
                         </div>
                     </div>
+                    <div class="col-lg-3 col-md-6 offset-md-6 offset-lg-0">
+                        <div class="cart_area">
+                            <div class="middel_links">
+                                <ul>
+                                    <?php
+                                    if (isset($_SESSION['customer_name'])) {
+                                        echo '<li><i class="fa-solid fa-user"></i>  &nbsp;' . $_SESSION['customer_name'] . ' &nbsp; &nbsp;<a href="logout.php">Logout</a></li>';
+                                    } else {
+                                        echo '<li><a href="login.php">Login</a></li>';
+                                        echo '<li>/</li>';
+                                        echo '<li><a href="register.php">Register</a></li>';
+                                    }
+                                    ?>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -448,7 +482,7 @@ function getAVGStarFeedback($conn, $product_id)
 
                             <div id="img-1" class="zoomWrapper single-zoom">
                                 <a>
-                                    <img id="zoom1" src="<?php echo $product['img']; ?>" data-zoom-image="<?php echo $product['img']; ?>" alt="big-1">
+                                    <img id="zoom1" src="<?php echo $product['avata_product']; ?>" data-zoom-image="<?php echo $product['avata_product']; ?>" alt="big-1">
                                 </a>
                             </div>
 
@@ -459,7 +493,7 @@ function getAVGStarFeedback($conn, $product_id)
                             <div class="product_d_right">
                                 <form action="#">
 
-                                    <h1><?php echo $product['name']; ?></h1>
+                                    <h1><?php echo $product['product_name']; ?></h1>
                                     <div class=" product_ratting">
                                         <ul>
                                             <?php

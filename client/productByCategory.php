@@ -1,4 +1,5 @@
 <?php
+session_start();
 include("../function.php");
 
 // Khởi tạo kết nối đến cơ sở dữ liệu
@@ -109,6 +110,7 @@ function getCategoryName($conn, $category_id)
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/img/favicon.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/plugins.css">
     <link rel="stylesheet" href="../assets/css/style.css">
 
@@ -140,6 +142,23 @@ function getCategoryName($conn, $category_id)
                                 <button type="submit">Tìm kiếm</button>
                             </form>
                         </div>
+
+                        <div class="cart_area">
+                            <div class="middel_links">
+                                <ul>
+                                    <?php
+                                    if (isset($_SESSION['customer_name'])) {
+                                        echo '<li><i class="fa-solid fa-user"></i>  &nbsp;' . $_SESSION['customer_name'] . ' &nbsp; &nbsp;<a href="logout.php">Logout</a></li>';
+                                    } else {
+                                        echo '<li><a href="login.php">Login</a></li>';
+                                        echo '<li>/</li>';
+                                        echo '<li><a href="register.php">Register</a></li>';
+                                    }
+                                    ?>
+                                </ul>
+                            </div>
+                        </div>
+                        
                         <div class="contact_phone">
                             <p>Call Free Support: <a href="tel:01234567890">01234567890</a></p>
                         </div>
@@ -207,6 +226,24 @@ function getCategoryName($conn, $category_id)
                             </form>
                         </div>
                     </div>
+                    <div class="col-lg-3 col-md-6 offset-md-6 offset-lg-0">
+                        <div class="cart_area">
+                            <div class="middel_links">
+                                <ul>
+                                    <?php
+                                    if (isset($_SESSION['customer_name'])) {
+                                        echo '<li><i class="fa-solid fa-user"></i>  &nbsp;' . $_SESSION['customer_name'] . ' &nbsp; &nbsp;<a href="logout.php">Logout</a></li>';
+                                    } else {
+                                        echo '<li><a href="login.php">Login</a></li>';
+                                        echo '<li>/</li>';
+                                        echo '<li><a href="register.php">Register</a></li>';
+                                    }
+                                    ?>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -238,8 +275,8 @@ function getCategoryName($conn, $category_id)
                                                     <li><a href="productByCategory.php?category_id=10">Socks</a></li>
                                                 </ul>
                                             </li>
-                                            <li class="active"><a href="about.html">About us</a></li>
-                                            <li><a href="contact.html">Contact Us</a></li>
+                                            <li class="active"><a href="about.php">About us</a></li>
+                                            <li><a href="contact.php">Contact Us</a></li>
                                         </ul>
                                     </nav>
                                 </div>
@@ -304,7 +341,7 @@ function getCategoryName($conn, $category_id)
                                         <div class="single_product">
                                             <div class="product_thumb">
                                                 <a class="primary_img" href="product-details.php?product_id=<?php echo $product['product_id']; ?>&category_id=<?php echo $category_id; ?>">
-                                                    <img src="<?php echo $product['img']; ?>" alt="Product Image">
+                                                    <img src="<?php echo $product['avata_product']; ?>" alt="Product Image">
                                                 </a>
                                                 <!-- <a class="secondary_img" href="product-details.html"><img src="assets/img/product/product16.jpg" alt=""></a> -->
 
@@ -312,7 +349,7 @@ function getCategoryName($conn, $category_id)
                                             </div>
 
                                             <div class="product_content grid_content">
-                                                <h3><a href="product-details.php?product_id=<?php echo $product['product_id']; ?>&category_id=<?php echo $category_id; ?>"><?php echo $product['name']; ?></a></h3>
+                                                <h3><a href="product-details.php?product_id=<?php echo $product['product_id']; ?>&category_id=<?php echo $category_id; ?>"><?php echo $product['product_name']; ?></a></h3>
                                                 <span class="current_price">$<?php echo $product['price']; ?></span>
                                                 <!-- <span class="old_price"><?php echo $product['old_price']; ?></span> -->
                                             </div>

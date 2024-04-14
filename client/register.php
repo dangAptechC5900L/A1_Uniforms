@@ -7,11 +7,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $username = $_POST['username'];
     $password = $_POST['password'];
+    $confirm_Password = $_POST['confirm_Password'];
+    $first_name = $_POST['first_name'];
+    $middle_name = $_POST['middle_name'];
+    $last_name = $_POST['last_name'];
+    $phone_number = $_POST['phone_number'];
+    $address = $_POST['address'];
     if (empty($email)) {
         $errors[] = "Email must be provided";
     }
     if (empty($username)) {
         $errors[] = "Username must be provided";
+    }
+    if (empty($confirm_Password)) {
+        $errors[] = "confirm_Password must be provided";
+    }
+    if ($password !== $confirm_Password) {
+        $errors[] = "Password and Confirm Password do not match";
     }
     if (empty($password)) {
         $errors[] = "Password must be provided";
@@ -26,18 +38,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
-        $errors[] = "email already exists";
+        $errors[] = "Email already exists";
     }
     if (count($errors) == 0) {
         $password_hash = sha1($password);
-        $query_string = "INSERT INTO customer (email, username, password) VALUES (?, ?, ?)";
+        $query_string = "INSERT INTO customer (customer_name, password, first_name, middle_name, last_name, email, phone_number, address) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($query_string);
-        $stmt->bind_param('sss', $email, $username, $password_hash);
+        $stmt->bind_param('ssssssds', $username, $password_hash, $first_name, $middle_name, $last_name, $email, $phone_number, $address);
         $stmt->execute();
-        if ($stmt->affected_rows > 0) {
-            echo "<script>alert('Register successfully');</script>";
+        if ($stmt->affected_rows > 0){
+            echo "<script>alert('Registration Successful');</script>";
+            echo "<script>window.location.href = 'login.php';</script>";
+            exit;
         } else {
-            echo "<script>alert('Register failed');</script>";
+            echo "<script>alert('Registration failed');</script>";
         }
     } else {
         $error_message = "";
@@ -47,8 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "<script>alert('" . $error_message . "');</script>";
     }
 }
-
 ?>
+
+
 <!doctype html>
 <html class="no-js" lang="en">
 
@@ -58,23 +73,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Register</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="../assets/img/favicon.svg">
-
-    <!-- CSS 
-    ========================= -->
-
-
-    <!-- Plugins CSS -->
     <link rel="stylesheet" href="../assets/css/plugins.css">
-
-    <!-- Main Style CSS -->
     <link rel="stylesheet" href="../assets/css/style.css">
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
-
     <div class="offcanvas_menu">
         <div class="container">
             <div class="row">
@@ -87,8 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <a href="javascript:void(0)"><i class="ion-android-close"></i></a>
                         </div>
                         <div class="search_bar">
-                            <form method="GET" action="searchResults.php">
-                                <input type="text" name="searchTerm" placeholder="Enter the product name...">
+                            <form action="#">
+                                <input placeholder="Search entire store here..." type="text">
                                 <button type="submit"><i class="ion-ios-search-strong"></i></button>
                             </form>
                         </div>
@@ -124,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </ul>
                         </div>
                         <div class="offcanvas_footer">
-                            <span><a href="#"><i class="fa fa-envelope-o"></i> info@yourdomain.com</a></span>
+                            <span><a href="mailto:a1uniforms@gmail.com"><i class="fa fa-envelope-o"></i> &nbsp; a1uniforms@gmail.com</a></span>
                             <ul>
                                 <li class="facebook"><a href="#"><i class="fa fa-facebook"></i></a></li>
                                 <li class="twitter"><a href="#"><i class="fa fa-twitter"></i></a></li>
@@ -150,8 +155,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                     <div class="col-lg-6 col-md-12">
                         <div class="search_bar">
-                            <form method="GET" action="searchResults.php">
-                                <input type="text" name="searchTerm" placeholder="Enter the product name...">
+                            <form action="#">
+                                <input placeholder="Search entire store here..." type="text">
                                 <button type="submit"><i class="ion-ios-search-strong"></i></button>
                             </form>
                         </div>
@@ -161,9 +166,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
         </div>
-        <!--header middel end-->
-
-        <!--header bottom satrt-->
         <div class="header_bottom sticky-header">
             <div class="container">
                 <div class="row align-items-center">
@@ -204,7 +206,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
         </div>
-        <!--header bottom end-->
     </header>
 
     <div class="breadcrumbs_area other_bread">
@@ -224,43 +225,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
-    <!--breadcrumbs area end-->
-
-
-    <!-- customer login start -->
     <div class="customer_login">
         <div class="container">
             <div class="row">
-                <!--login area start-->
                 <div class="col-8">
                     <div class="account_form register">
                         <h2>Register</h2>
-                        <form action="register.php" method="post">
+                        <form action="register.php" onsubmit=" return validateForm()" method="post">
                             <p>
-                                <label>Email address <span>*</span></label>
-                                <input type="email" name="email" required>
+                                <label>First name <span>*</span></label>
+                                <input type="text" name="first_name">
+                            </p>
+                            <p>
+                                <label>Middle name <span>*</span></label>
+                                <input type="text" name="middle_name">
+                            </p>
+                            <p>
+                                <label>Last name <span>*</span></label>
+                                <input type="text" name="last_name">
+                            </p>
+                            <p>
+                                <label>Phone number <span>*</span></label>
+                                <input type="tel" name="phone_number" pattern="0\d{9}" title="Phone number must start with 0 and be followed by 9 digits">
+                            </p>
+                            <p>
+                                <label>Address <span>*</span></label>
+                                <input type="text" name="address">     
                             </p>
                             <p>
                                 <label>User name <span>*</span></label>
                                 <input type="text" name="username" required>
                             </p>
                             <p>
-                                <label>Passwords <span>*</span></label>
-                                <input type="password" name="password" pattern="(?=.*[A-Za-z]).{8,}" title="Password must be at least 8 characters long and contain at least one letter" required>
+                                <label>Email address <span>*</span></label>
+                                <input type="email" name="email" required>
                             </p>
+                            <p>
+                                <label>Passwords <span>*</span></label>
+                                <input type="password" id="password" name="password" pattern="(?=.*[A-Za-z]).{8,}" title="Password must be at least 8 characters long and contain at least one letter" required>
+                            </p>
+                            <p>
+                                <label>Confirm Password <span>*</span></label>
+                                <input type="password" id="confirm_Password" name="confirm_Password" required>
+                            </p>
+
                             <div class="login_submit">
                                 <button type="submit" name="submit">Register</button>
                             </div>
                         </form>
                     </div>
                 </div>
-                <!--login area start-->
             </div>
         </div>
     </div>
-    <!-- customer login end -->
-
-    <!--footer area start-->
     <footer class="footer_widgets other_widgets">
         <div class="footer_top">
             <div class="container">
@@ -348,16 +365,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </footer>
-    <!--footer area end-->
-
-    <!-- JS
-============================================ -->
-
-    <!-- Plugins JS -->
-    <!-- <script src="assets/js/plugins.js"></script> -->
-
-    <!-- Main JS -->
-    <!-- <script src="assets/js/main.js"></script> -->
+    <script src="assets/js/plugins.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        function validateForm() {
+            var password = document.getElementById('password').value;
+            var confirm_password = document.getElementById('confirm_password').value;
+            if (password === '' || confirm_password === '') {
+                alert('Mật khẩu và xác nhận mật khẩu không được để trống.');
+                return false;
+            } else if (password !== confirm_password) {
+                alert('Mật khẩu và xác nhận mật khẩu phải trùng khớp.');
+                return false;
+            }
+            return true;
+        }
+    </script>
 </body>
 
 </html>

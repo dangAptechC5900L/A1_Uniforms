@@ -1,3 +1,50 @@
+<?php
+session_start();
+include '../function.php';
+
+$conn = initConnection();
+
+function getAllAboutUs($conn)
+{
+    $sql = "SELECT * FROM about_us WHERE isDeleted=0";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $about_us = array();
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $about_us[] = $row;
+        }
+    }
+    $stmt->close();
+
+    return $about_us;
+}
+
+function getCategoryByID($conn)
+{
+    $sql = "SELECT * FROM category";
+    $result = $conn->query($sql);
+
+    $categories = []; // Khởi tạo mảng chứa dữ liệu
+
+    if ($result->num_rows > 0) {
+        // Duyệt qua từng hàng kết quả và lưu vào mảng
+        while ($row = $result->fetch_assoc()) {
+            $categories[] = $row; // Thêm dữ liệu của hàng vào mảng categories
+        }
+    }
+
+    return $categories; // Trả về mảng categories
+}
+
+$categories=getCategoryByID($conn);
+
+$about_us = getAllAboutUs($conn);
+
+?>
+
 <!doctype html>
 <html class="no-js" lang="en">
 
@@ -9,6 +56,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="../assets/img/favicon.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- CSS 
     ========================= -->
@@ -42,6 +90,21 @@
                                 <input type="text" name="searchTerm" placeholder="Enter the product name...">
                                 <button type="submit"><i class="ion-ios-search-strong"></i></button>
                             </form>
+                        </div>
+                        <div class="cart_area">
+                            <div class="middel_links">
+                                <ul>
+                                    <?php
+                                    if (isset($_SESSION['customer_name'])) {
+                                        echo '<li><i class="fa-solid fa-user"></i>  &nbsp;' . $_SESSION['customer_name'] . ' &nbsp; &nbsp;<a href="logout.php">Logout</a></li>';
+                                    } else {
+                                        echo '<li><a href="login.php">Login</a></li>';
+                                        echo '<li>/</li>';
+                                        echo '<li><a href="register.php">Register</a></li>';
+                                    }
+                                    ?>
+                                </ul>
+                            </div>
                         </div>
                         <div class="contact_phone">
                             <p>Call Free Support: <a href="tel:01234567890">01234567890</a></p>
@@ -113,6 +176,23 @@
                             </form>
                         </div>
                     </div>
+                    <div class="col-lg-3 col-md-6 offset-md-6 offset-lg-0">
+                        <div class="cart_area">
+                            <div class="middel_links">
+                                <ul>
+                                    <?php
+                                    if (isset($_SESSION['customer_name'])) {
+                                        echo '<li><i class="fa-solid fa-user"></i>  &nbsp;' . $_SESSION['customer_name'] . ' &nbsp; &nbsp;<a href="logout.php">Logout</a></li>';
+                                    } else {
+                                        echo '<li><a href="login.php">Login</a></li>';
+                                        echo '<li>/</li>';
+                                        echo '<li><a href="register.php">Register</a></li>';
+                                    }
+                                    ?>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -130,18 +210,11 @@
                                         <ul>
                                             <li><a href="index.php">Home</a>
                                             </li>
-                                            <li><a href="shop.php">Shop<i class="fa fa-angle-down"></i></a>
+                                            <li><a>Shop<i class="fa fa-angle-down"></i></a>
                                                 <ul class="sub_menu pages">
-                                                    <li><a href="shop.php#Shirts">Shirts</a></li>
-                                                    <li><a href="shop.php#Skirts">Skirts</a></li>
-                                                    <li><a href="shop.php#Frocks">Frocks</a></li>
-                                                    <li><a href="shop.php#P-T-T-shirts">P.T.T.shirts</a></li>
-                                                    <li><a href="shop.php#P-T-shorts">P.T.shorts</a></li>
-                                                    <li><a href="shop.php#P-T-track-pants">P.T.track-pants</a></li>
-                                                    <li><a href="shop.php#Belts">Belts</a></li>
-                                                    <li><a href="shop.php#Ties">Ties</a></li>
-                                                    <li><a href="shop.php#Logos">Logos</a></li>
-                                                    <li><a href="shop.php#Socks">Socks</a></li>
+                                                    <?php foreach($categories as $category) :?>
+                                                    <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
+                                                    <?php endforeach; ?>
                                                 </ul>
                                             </li>
                                             <li class="active"><a href="about.php">About us</a></li>
@@ -185,11 +258,13 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-6 col-md-12">
-                    <div class="about_content">
-                        <h1>Welcome To A-1 Uniforms Store!</h1>
-                        <p> A-1 Uniforms was established in 2016 and since then, we have become one of the leading uniform manufacturers in the country. We supply uniforms to many schools nationwide and provide them with the best uniforms. We offer affordable school uniforms for both boys and girls. When customers come to us, we embrace their vision. As a professional team, we understand what customers want and deliver the best results. </p>
-                        <p>At A-1, uniform designs are innovative and there are always fresh ideas for each customer. The fabric materials are of excellent quality and we tailor each uniform according to the provided size requirements. The fit is impeccable and we provide the best products. A-1 Uniforms is part of a continuous strategic process with creative inputs from experts in the field. We treat each customer differently and ensure satisfaction with the end result. Every customer is valued foremost.</p>
-                    </div>
+                    <?php foreach ($about_us as $about_us) : ?>
+                        <div class="about_content">
+                            <h1><?php echo $about_us['title'] ?></h1>
+                            <p><?php echo $about_us['description'] ?></p>
+                        </div>
+                    <?php endforeach; ?>
+
                 </div>
                 <div class="col-lg-6 col-md-12">
                     <div class="about_thumb">

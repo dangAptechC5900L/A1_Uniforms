@@ -3,24 +3,24 @@ include '../../../function.php';
 
 $conn = initConnection();
 
-//Change Status
-// if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['customer_id'])) {
-// 	$customer_id = $_POST['customer_id'];
+// Change Status
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_about'])) {
+	$about_id = $_POST['id_about'];
 
-// 	// Đảo ngược trạng thái của khách hàng trong cơ sở dữ liệu
-// 	$sql = "UPDATE customer SET isDeleted = 1 - isDeleted WHERE customer_id = ?";
-// 	$stmt = $conn->prepare($sql);
-// 	$stmt->bind_param('i', $customer_id);
+	// Đảo ngược trạng thái của khách hàng trong cơ sở dữ liệu
+	$sql = "UPDATE about_us SET isDeleted = 1 - isDeleted WHERE id_about = ?";
+	$stmt = $conn->prepare($sql);
+	$stmt->bind_param('i', $about_id);
 
-// 	if ($stmt->execute()) {
-// 		// Chuyển hướng lại đến trang hiện tại sau khi cập nhật thành công
-// 		header("Location: " . $_SERVER['PHP_SELF']);
-// 		exit();
-// 	} else {
-// 		echo "Có lỗi xảy ra khi cập nhật trạng thái!";
-// 	}
-// 	$stmt->close();
-// }
+	if ($stmt->execute()) {
+		// Chuyển hướng lại đến trang hiện tại sau khi cập nhật thành công
+		header("Location: " . $_SERVER['PHP_SELF']);
+		exit();
+	} else {
+		echo "Có lỗi xảy ra khi cập nhật trạng thái!";
+	}
+	$stmt->close();
+}
 
 function getTotalAboutUs($conn)
 {
@@ -591,7 +591,7 @@ $rows = getTotalAboutUs($conn);
 											<!-- <th>ID</th> -->
 											<th>Title</th>
 											<th>Description</th>
-											
+											<th>Status</th>
 											<th>Functions</th>
 										</tr>
 									</thead>
@@ -677,16 +677,16 @@ $rows = getTotalAboutUs($conn);
 														<?php endif; ?>
 													</div>
 												</td> -->
-												<!-- <td>
+												<td>
 													<div class="btn-group">
-														<form action="customer-list.php" method="post">
+														<form action="about_us-list.php" method="post">
 															<button type="submit" name="id_about" value="<?php echo $about_us['id_about']; ?>" class="btn <?php echo $about_us['isDeleted'] == 0 ? 'btn-success' : 'btn-secondary'; ?> rounded">
-																<?php echo $customer['isDeleted'] == 0 ? "Active" : "Inactive"; ?>
+																<?php echo $about_us['isDeleted'] == 0 ? "Active" : "Inactive"; ?>
 															</button>
 														</form>
 													</div>
 
-												</td> -->
+												</td>
 												<td>
 
 													<div class="d-flex">
