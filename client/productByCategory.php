@@ -21,6 +21,7 @@ $totalPages = $productsData['totalPages'];
 
 //gán giá trị trả về của hàm getCategoryName() vào biến $categoryName
 $categoryName = getCategoryName($conn, $category_id);
+$categories=getCategoryByID($conn);
 
 
 // Đóng kết nối
@@ -96,6 +97,25 @@ function getCategoryName($conn, $category_id)
     $stmt->close();
     return $categoryName;
 }
+
+function getCategoryByID($conn)
+{
+    $sql = "SELECT * FROM category";
+    $result = $conn->query($sql);
+
+    $categories = []; // Khởi tạo mảng chứa dữ liệu
+
+    if ($result->num_rows > 0) {
+        // Duyệt qua từng hàng kết quả và lưu vào mảng
+        while ($row = $result->fetch_assoc()) {
+            $categories[] = $row; // Thêm dữ liệu của hàng vào mảng categories
+        }
+    }
+
+    return $categories; // Trả về mảng categories
+}
+
+
 
 
 
@@ -261,18 +281,11 @@ function getCategoryName($conn, $category_id)
                                         <ul>
                                             <li><a href="index.php">Home</a>
                                             </li>
-                                            <li><a href="shop-fullwidth.html">Shop<i class="fa fa-angle-down"></i></a>
+                                            <li><a>Shop<i class="fa fa-angle-down"></i></a>
                                                 <ul class="sub_menu pages">
-                                                    <li><a href="productByCategory.php?category_id=1">Shirts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=2">Skirts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=3">Frocks </a></li>
-                                                    <li><a href="productByCategory.php?category_id=4">P.T. T-shirts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=5">P.T. shorts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=6">P.T. track pants</a></li>
-                                                    <li><a href="productByCategory.php?category_id=7">Belts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=8">Ties</a></li>
-                                                    <li><a href="productByCategory.php?category_id=9">Logos</a></li>
-                                                    <li><a href="productByCategory.php?category_id=10">Socks</a></li>
+                                                    <?php foreach($categories as $category) :?>
+                                                    <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
+                                                    <?php endforeach; ?>
                                                 </ul>
                                             </li>
                                             <li class="active"><a href="about.php">About us</a></li>

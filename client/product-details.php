@@ -5,15 +5,8 @@ include("../function.php");
 // Khởi tạo kết nối đến cơ sở dữ liệu
 $conn = initConnection();
 
-if(isset($_SESSION['customer_id'])) {
-    // Lấy customer_id từ phiên
-    $customer_id = $_SESSION['customer_id'];
-} else {
-    // Nếu người dùng chưa đăng nhập, có thể xử lý ở đây hoặc redirect về trang đăng nhập
-    // Ví dụ:
-    header("Location: login.php");
-    exit();
-}
+// Kiểm tra trạng thái đăng nhập
+$customer_id = isset($_SESSION['customer_id']) ? $_SESSION['customer_id'] : null;
 
 // Lấy giá trị category_id từ tham số truy vấn
 $category_id = $_GET['category_id'];
@@ -36,7 +29,19 @@ $totalFeedbacks = getTotalFeedback($conn, $product_id);
 
 $avgFeedbacks = getAVGStarFeedback($conn, $product_id);
 
-addFeedbackProduct($conn, $product_id, $category_id,$customer_id);
+$categories = getCategoryByID($conn);
+
+// Nếu người dùng chưa đăng nhập và họ cố gắng thêm feedback, chuyển hướng họ đến trang đăng nhập
+if ($_SERVER["REQUEST_METHOD"] == "POST" && $customer_id === null) {
+    echo "<script>alert('Bạn cần đăng nhập để thêm feedback.');</script>";
+    // header("Location: login.php");
+    echo "<script>return false;</script>";
+}
+
+// Nếu người dùng đã đăng nhập, thêm feedback
+if ($_SERVER["REQUEST_METHOD"] == "POST" && $customer_id !== null) {
+    addFeedbackProduct($conn, $product_id, $category_id, $customer_id);
+}
 
 // Đóng kết nối
 mysqli_close($conn);
@@ -73,7 +78,7 @@ function getCategoryName($conn, $category_id)
     return $categoryName;
 }
 
-function addFeedbackProduct($conn, $product_id, $category_id,$customer_id)
+function addFeedbackProduct($conn, $product_id, $category_id, $customer_id)
 {
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // $name=$_POST['author'];
@@ -81,7 +86,7 @@ function addFeedbackProduct($conn, $product_id, $category_id,$customer_id)
         $description = $_POST['comment'];
         $star_rating = $_POST['star_rating']; // Lấy giá trị số sao từ form
         $feedbackDate = date('Y-m-d H:i:s'); // Lấy thời gian hiện tại
- 
+
 
         if (empty($description) && empty($star_rating)) {
             echo 'Vui lòng nhập nội dung feedback và đánh giá sao!';
@@ -143,6 +148,25 @@ function getAVGStarFeedback($conn, $product_id)
     $stmt->close();
     return $avgFeedbacks;
 }
+
+function getCategoryByID($conn)
+{
+    $sql = "SELECT * FROM category";
+    $result = $conn->query($sql);
+
+    $categories = []; // Khởi tạo mảng chứa dữ liệu
+
+    if ($result->num_rows > 0) {
+        // Duyệt qua từng hàng kết quả và lưu vào mảng
+        while ($row = $result->fetch_assoc()) {
+            $categories[] = $row; // Thêm dữ liệu của hàng vào mảng categories
+        }
+    }
+
+    return $categories; // Trả về mảng categories
+}
+
+
 
 ?>
 <!doctype html>
@@ -249,7 +273,7 @@ function getAVGStarFeedback($conn, $product_id)
                     </div>
                     <div class="offcanvas_menu_wrapper">
 
-                    <div class="cart_area">
+                        <div class="cart_area">
                             <div class="middel_links">
                                 <ul>
                                     <?php
@@ -419,18 +443,11 @@ function getAVGStarFeedback($conn, $product_id)
                                         <ul>
                                             <li><a href="index.php">Home</a>
                                             </li>
-                                            <li><a href="shop-fullwidth.html">Shop<i class="fa fa-angle-down"></i></a>
+                                            <li><a>Shop<i class="fa fa-angle-down"></i></a>
                                                 <ul class="sub_menu pages">
-                                                    <li><a href="productByCategory.php?category_id=1">Shirts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=2">Skirts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=3">Frocks </a></li>
-                                                    <li><a href="productByCategory.php?category_id=4">P.T. T-shirts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=5">P.T. shorts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=6">P.T. track pants</a></li>
-                                                    <li><a href="productByCategory.php?category_id=7">Belts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=8">Ties</a></li>
-                                                    <li><a href="productByCategory.php?category_id=9">Logos</a></li>
-                                                    <li><a href="productByCategory.php?category_id=10">Socks</a></li>
+                                                    <?php foreach ($categories as $category) : ?>
+                                                        <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
+                                                    <?php endforeach; ?>
                                                 </ul>
                                             </li>
                                             <li class="active"><a href="about.php">About us</a></li>
@@ -529,30 +546,41 @@ function getAVGStarFeedback($conn, $product_id)
                                          Sleeker design. Beautiful, durable, and sleeker than ever, iPod classic now features an anodized aluminum and polish.. </p> -->
                                     </div>
 
+                                    <!--product variant color start-->
                                     <div class="product_variant color">
-                                        <h3>color</h3>
-                                        <select class="niceselect_option" id="color" name="produc_color">
-                                            <option selected value="1">choose in option</option>
-                                            <option value="2">choose in option2</option>
-                                            <option value="3">choose in option3</option>
-                                            <option value="4">choose in option4</option>
+                                        <h3>Color</h3>
+                                        <select class="niceselect_option" id="color" name="product_color">
+                                            <option selected disabled>Choose color</option>
+                                            <?php foreach ($products as $product) : ?>
+                                                <?php
+                                                // Phân tách chuỗi màu sắc thành các phần tử riêng biệt
+                                                     $colors = explode(', ', $product['arr_color']);
+                                                ?>
+                                                <?php foreach ($colors as $color) : ?>
+                                                    <option value="<?php echo $color; ?>"><?php echo $color; ?></option>
+                                                <?php endforeach; ?>
+                                            <?php endforeach; ?>
                                         </select>
                                     </div>
+                                    <!--product variant color end-->
                                     <div class="product_variant size">
                                         <h3>size</h3>
-                                        <select class="niceselect_option" id="color1" name="produc_color">
-                                            <option selected value="1">size</option>
-                                            <option value="2">x</option>
-                                            <option value="2">xl</option>
-                                            <option value="3">md</option>
-                                            <option value="4">xxl</option>
-                                            <option value="4">s</option>
+                                        <select class="niceselect_option" id="color" name="product_color">
+                                            <option selected disabled>Choose size</option>
+                                            <?php foreach ($products as $product) : ?>
+                                                <?php
+                                                    $sizes = explode(', ', $product['size']);
+                                                ?>
+                                                <?php foreach ($sizes as $size) : ?>
+                                                    <option value="<?php echo $size; ?>"><?php echo $size; ?></option>
+                                                <?php endforeach; ?>
+                                            <?php endforeach; ?>
                                         </select>
                                     </div>
                                     <div class="product_variant quantity">
                                         <label>quantity</label>
                                         <input min="1" max="100" value="1" type="number">
-                                        <button class="button" type="submit">add to cart</button>
+
                                     </div>
 
 
@@ -773,7 +801,7 @@ function getAVGStarFeedback($conn, $product_id)
         </div>
         <div class="footer_bottom">
             <div class="container">
-               <div class="row">
+                <div class="row">
                     <div class="col-md-12">
                         <div class="copyright_area">
                             <p> &copy; 2024 <strong> A-1 Uniforms</strong></p>

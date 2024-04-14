@@ -185,18 +185,11 @@ $categories=getCategoryByID($conn);
                                         <ul>
                                             <li><a href="index.php">Home</a>
                                             </li>
-                                            <li><a href="shop.php">Shop<i class="fa fa-angle-down"></i></a>
+                                            <li><a>Shop<i class="fa fa-angle-down"></i></a>
                                                 <ul class="sub_menu pages">
-                                                    <li><a href="shop.php#Shirts">Shirts</a></li>
-                                                    <li><a href="shop.php#Skirts">Skirts</a></li>
-                                                    <li><a href="shop.php#Frocks">Frocks</a></li>
-                                                    <li><a href="shop.php#P-T-T-shirts">P.T.T.shirts</a></li>
-                                                    <li><a href="shop.php#P-T-shorts">P.T.shorts</a></li>
-                                                    <li><a href="shop.php#P-T-track-pants">P.T.track-pants</a></li>
-                                                    <li><a href="shop.php#Belts">Belts</a></li>
-                                                    <li><a href="shop.php#Ties">Ties</a></li>
-                                                    <li><a href="shop.php#Logos">Logos</a></li>
-                                                    <li><a href="shop.php#Socks">Socks</a></li>
+                                                    <?php foreach($categories as $category) :?>
+                                                    <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
+                                                    <?php endforeach; ?>
                                                 </ul>
                                             </li>
                                             <li class="active"><a href="about.php">About us</a></li>
