@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $conn->prepare($query_string);
         $stmt->bind_param('ssssssds', $username, $password_hash, $first_name, $middle_name, $last_name, $email, $phone_number, $address);
         $stmt->execute();
-        if ($stmt->affected_rows > 0){
+        if ($stmt->affected_rows > 0) {
             echo "<script>alert('Registration Successful');</script>";
             echo "<script>window.location.href = 'login.php';</script>";
             exit;
@@ -61,6 +61,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "<script>alert('" . $error_message . "');</script>";
     }
 }
+
+function getCategoryByID($conn)
+{
+    $sql = "SELECT * FROM category";
+    $result = $conn->query($sql);
+
+    $categories = []; // Khởi tạo mảng chứa dữ liệu
+
+    if ($result->num_rows > 0) {
+        // Duyệt qua từng hàng kết quả và lưu vào mảng
+        while ($row = $result->fetch_assoc()) {
+            $categories[] = $row; // Thêm dữ liệu của hàng vào mảng categories
+        }
+    }
+
+    return $categories; // Trả về mảng categories
+}
+
+$categories = getCategoryByID($conn);
 ?>
 
 
@@ -93,32 +112,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                         <div class="search_bar">
                             <form action="#">
-                                <input placeholder="Search entire store here..." type="text">
+                                <input placeholder="Search products here..." type="text">
                                 <button type="submit"><i class="ion-ios-search-strong"></i></button>
                             </form>
                         </div>
+
                         <div class="contact_phone">
                             <p>Call Free Support: <a href="tel:01234567890">01234567890</a></p>
                         </div>
                         <div id="menu" class="text-left ">
                             <ul class="offcanvas_main_menu">
                                 <li class="menu-item-has-children">
-                                    <a href="shop.php">Shop</a>
-                                </li>
-                                <li class="menu-item-has-children">
-                                    <a href="#">Products</a>
-                                    <ul class="sub-menu">
-                                        <li><a href="shop.php#Shirts">Shirts</a></li>
-                                        <li><a href="shop.php#Skirts">Skirts</a></li>
-                                        <li><a href="shop.php#Frocks">Frocks</a></li>
-                                        <li><a href="shop.php#P-T-T-shirts">P.T.T.shirts</a></li>
-                                        <li><a href="shop.php#P-T-shorts">P.T.shorts</a></li>
-                                        <li><a href="shop.php#P-T-track-pants">P.T.track-pants</a></li>
-                                        <li><a href="shop.php#Belts">Belts</a></li>
-                                        <li><a href="shop.php#Ties">Ties</a></li>
-                                        <li><a href="shop.php#Logos">Logos</a></li>
-                                        <li><a href="shop.php#Socks">Socks</a></li>
+                                <li><a>Shop<i class="fa fa-angle-down"></i></a>
+                                    <ul class="sub_menu pages">
+                                        <?php foreach ($categories as $category) : ?>
+                                            <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
+                                        <?php endforeach; ?>
                                     </ul>
+                                </li>
+                                </li>
                                 </li>
                                 <li class="menu-item-has-children">
                                     <a href="about.php">About Us</a>
@@ -155,13 +167,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                     <div class="col-lg-6 col-md-12">
                         <div class="search_bar">
-                            <form action="#">
-                                <input placeholder="Search entire store here..." type="text">
+                            <form method="GET" action="searchResults.php">
+                                <input type="text" name="searchTerm" placeholder="Enter the product name...">
                                 <button type="submit"><i class="ion-ios-search-strong"></i></button>
                             </form>
                         </div>
+
                     </div>
                     <div class="col-lg-3 col-md-6 offset-md-6 offset-lg-0">
+                        <div class="cart_area">
+                            <div class="middel_links">
+                                <ul>
+                                    <?php
+                                    if (isset($_SESSION['customer_name'])) {
+                                        echo '<li><i class="fa-solid fa-user"></i>  &nbsp;' . $_SESSION['customer_name'] . ' &nbsp; &nbsp;<a href="logout.php">Logout</a></li>';
+                                    } else {
+                                        echo '<li><a href="login.php">Login</a></li>';
+                                        echo '<li>/</li>';
+                                        echo '<li><a href="register.php">Register</a></li>';
+                                    }
+                                    ?>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -177,18 +205,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <ul>
                                             <li><a href="index.php">Home</a>
                                             </li>
-                                            <li><a href="shop.php">Shop<i class="fa fa-angle-down"></i></a>
+                                            <li><a>Shop<i class="fa fa-angle-down"></i></a>
                                                 <ul class="sub_menu pages">
-                                                    <li><a href="shop.php#Shirts">Shirts</a></li>
-                                                    <li><a href="shop.php#Skirts">Skirts</a></li>
-                                                    <li><a href="shop.php#Frocks">Frocks</a></li>
-                                                    <li><a href="shop.php#P-T-T-shirts">P.T.T.shirts</a></li>
-                                                    <li><a href="shop.php#P-T-shorts">P.T.shorts</a></li>
-                                                    <li><a href="shop.php#P-T-track-pants">P.T.track-pants</a></li>
-                                                    <li><a href="shop.php#Belts">Belts</a></li>
-                                                    <li><a href="shop.php#Ties">Ties</a></li>
-                                                    <li><a href="shop.php#Logos">Logos</a></li>
-                                                    <li><a href="shop.php#Socks">Socks</a></li>
+                                                    <?php foreach ($categories as $category) : ?>
+                                                        <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
+                                                    <?php endforeach; ?>
                                                 </ul>
                                             </li>
                                             <li class="active"><a href="about.php">About us</a></li>
@@ -250,7 +271,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </p>
                             <p>
                                 <label>Address <span>*</span></label>
-                                <input type="text" name="address">     
+                                <input type="text" name="address">
                             </p>
                             <p>
                                 <label>User name <span>*</span></label>
@@ -365,8 +386,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </footer>
-    <script src="assets/js/plugins.js"></script>
-    <script src="assets/js/main.js"></script>
+    <script src="../assets/js/plugins.js"></script>
+    <script src="../assets/js/main.js"></script>
     <script>
         function validateForm() {
             var password = document.getElementById('password').value;

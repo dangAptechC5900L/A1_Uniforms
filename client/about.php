@@ -115,22 +115,13 @@ $about_us = getAllAboutUs($conn);
                                     <a href="index.php">Home</a>
                                 </li>
                                 <li class="menu-item-has-children">
-                                    <a href="shop.php">Shop</a>
-                                </li>
-                                <li class="menu-item-has-children">
-                                    <a href="#">Products</a>
-                                    <ul class="sub-menu">
-                                        <li><a href="shop.php#Shirts">Shirts</a></li>
-                                        <li><a href="shop.php#Skirts">Skirts</a></li>
-                                        <li><a href="shop.php#Frocks">Frocks</a></li>
-                                        <li><a href="shop.php#P-T-T-shirts">P.T.T.shirts</a></li>
-                                        <li><a href="shop.php#P-T-shorts">P.T.shorts</a></li>
-                                        <li><a href="shop.php#P-T-track-pants">P.T.track-pants</a></li>
-                                        <li><a href="shop.php#Belts">Belts</a></li>
-                                        <li><a href="shop.php#Ties">Ties</a></li>
-                                        <li><a href="shop.php#Logos">Logos</a></li>
-                                        <li><a href="shop.php#Socks">Socks</a></li>
-                                    </ul>
+                                    <li><a>Shop<i class="fa fa-angle-down"></i></a>
+                                        <ul class="sub_menu pages">
+                                            <?php foreach ($categories as $category) : ?>
+                                                 <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
+                                            <?php endforeach; ?>
+                                         </ul>
+                                    </li>
                                 </li>
                                 <li class="menu-item-has-children">
                                     <a href="about.php">About Us</a>

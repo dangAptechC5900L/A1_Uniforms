@@ -8,9 +8,29 @@ $searchTerm = $_GET['searchTerm'];
 
 // Gọi hàm searchProductByName để tìm kiếm sản phẩm dựa trên từ khóa tìm kiếm
 $products = searchProductByName($conn, $searchTerm);
+$categories=getCategoryByID($conn);
 
 // Đóng kết nối
 mysqli_close($conn);
+
+function getCategoryByID($conn)
+{
+    $sql = "SELECT * FROM category";
+    $result = $conn->query($sql);
+
+    $categories = []; // Khởi tạo mảng chứa dữ liệu
+
+    if ($result->num_rows > 0) {
+        // Duyệt qua từng hàng kết quả và lưu vào mảng
+        while ($row = $result->fetch_assoc()) {
+            $categories[] = $row; // Thêm dữ liệu của hàng vào mảng categories
+        }
+    }
+
+    return $categories; // Trả về mảng categories
+}
+
+
 
 function searchProductByName($conn, $searchTerm)
 {
@@ -44,6 +64,7 @@ function searchProductByName($conn, $searchTerm)
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/img/favicon.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/plugins.css">
     <link rel="stylesheet" href="../assets/css/style.css">
 
@@ -84,25 +105,18 @@ function searchProductByName($conn, $searchTerm)
                                     <a href="index.php">Home</a>
                                 </li>
                                 <li class="menu-item-has-children">
-                                    <a href="shop-fullwidth.html">Shop</a>
-                                    <ul class="sub-menu">
-                                        <li><a href="productByCategory.php?category_id=1">Shirts</a></li>
-                                        <li><a href="productByCategory.php?category_id=2">Skirts</a></li>
-                                        <li><a href="shop-fullwidth.php?category_id=3">Frocks </a></li>
-                                        <li><a href="shop-fullwidth.php?category_id=4"> P.T. T-shirts</a></li>
-                                        <li><a href="shop-fullwidth.php?category_id=5">P.T. shorts</a></li>
-                                        <li><a href="shop-fullwidth.php?category_id=6">P.T. track pants</a></li>
-                                        <li><a href="shop-fullwidth.php?category_id=7">Belts</a></li>
-                                        <li><a href="shop-fullwidth.php?category_id=8">Ties</a></li>
-                                        <li><a href="shop-fullwidth.php?category_id=9">Logos</a></li>
-                                        <li><a href="shop-fullwidth.php?category_id=10">Socks</a></li>
+                                <li><a>Shop<i class="fa fa-angle-down"></i></a>
+                                    <ul class="sub_menu pages">
+                                        <?php foreach ($categories as $category) : ?>
+                                            <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
+                                        <?php endforeach; ?>
                                     </ul>
                                 </li>
                                 <li class="menu-item-has-children">
-                                    <a href="about.html">About Us</a>
+                                    <a href="about.php">About Us</a>
                                 </li>
                                 <li class="menu-item-has-children">
-                                    <a href="contact.html"> Contact Us</a>
+                                    <a href="contact.php"> Contact Us</a>
                                 </li>
                             </ul>
                         </div>
@@ -159,22 +173,15 @@ function searchProductByName($conn, $searchTerm)
                                         <ul>
                                             <li><a href="index.php">Home</a>
                                             </li>
-                                            <li><a href="shop-fullwidth.html">Shop<i class="fa fa-angle-down"></i></a>
+                                            <li><a>Shop<i class="fa fa-angle-down"></i></a>
                                                 <ul class="sub_menu pages">
-                                                    <li><a href="productByCategory.php?category_id=1">Shirts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=2">Skirts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=3">Frocks </a></li>
-                                                    <li><a href="productByCategory.php?category_id=4">P.T. T-shirts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=5">P.T. shorts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=6">P.T. track pants</a></li>
-                                                    <li><a href="productByCategory.php?category_id=7">Belts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=8">Ties</a></li>
-                                                    <li><a href="productByCategory.php?category_id=9">Logos</a></li>
-                                                    <li><a href="productByCategory.php?category_id=10">Socks</a></li>
+                                                    <?php foreach ($categories as $category) : ?>
+                                                        <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
+                                                    <?php endforeach; ?>
                                                 </ul>
                                             </li>
-                                            <li class="active"><a href="about.html">About us</a></li>
-                                            <li><a href="contact.html">Contact Us</a></li>
+                                            <li class="active"><a href="about.php">About us</a></li>
+                                            <li><a href="contact.php">Contact Us</a></li>
                                         </ul>
                                     </nav>
                                 </div>
@@ -277,7 +284,7 @@ function searchProductByName($conn, $searchTerm)
                                     </div>
                                 <?php endforeach; ?>
                             <?php else : ?>
-                                <h3 style="color:red; text-align:center; align-items:center; font-size:30px; padding-top: 70px;">Không có sản phẩm tương ứng</h3>
+                                <h3 style="color:red; text-align:center; align-items:center; font-size:30px; padding-top: 70px;">No Products Found</h3>
                             <?php endif; ?>
                         </div>
 
@@ -302,11 +309,11 @@ function searchProductByName($conn, $searchTerm)
                             <h3>Information</h3>
                             <div class="footer_menu">
                                 <ul>
-                                    <li><a href="about.html">About Us</a></li>
+                                    <li><a href="about.php">About Us</a></li>
                                     <li><a href="#">Delivery Information</a></li>
                                     <li><a href="privacy-policy.html">Privacy Policy</a></li>
                                     <li><a href="#">Terms & Conditions</a></li>
-                                    <li><a href="contact.html">Contact Us</a></li>
+                                    <li><a href="contact.php">Contact Us</a></li>
                                     <li><a href="#">Returns</a></li>
                                 </ul>
                             </div>
@@ -321,7 +328,7 @@ function searchProductByName($conn, $searchTerm)
                                     <li><a href="#">Gift Certificates</a></li>
                                     <li><a href="#">Affiliate</a></li>
                                     <li><a href="#">Specials</a></li>
-                                    <li><a href="contact.html">Site Map</a></li>
+                                    <li><a href="contact.php">Site Map</a></li>
                                     <li><a href="my-account.html">My Account</a></li>
                                 </ul>
                             </div>

@@ -20,7 +20,7 @@ function getCategoryByID($conn)
     return $categories; // Trả về mảng categories
 }
 
-$categories=getCategoryByID($conn);
+$categories = getCategoryByID($conn);
 
 ?>
 <!doctype html>
@@ -82,19 +82,13 @@ $categories=getCategoryByID($conn);
                                 </li>
 
                                 <li class="menu-item-has-children">
-                                    <a href="shop.php">Shop</a>
-                                    <ul class="sub-menu">
-                                        <li><a href="productByCategory.php?category_id=1">Shirts</a></li>
-                                        <li><a href="productByCategory.php?category_id=2">Skirts</a></li>
-                                        <li><a href="productByCategory.php?category_id=3">Frocks </a></li>
-                                        <li><a href="productByCategory.php?category_id=4"> P.T. T-shirts</a></li>
-                                        <li><a href="productByCategory.php?category_id=5">P.T. shorts</a></li>
-                                        <li><a href="productByCategory.php?category_id=6">P.T. track pants</a></li>
-                                        <li><a href="productByCategory.php?category_id=7">Belts</a></li>
-                                        <li><a href="productByCategory.php?category_id=8">Ties</a></li>
-                                        <li><a href="productByCategory.php?category_id=9">Logos</a></li>
-                                        <li><a href="productByCategory.php?category_id=10">Socks</a></li>
-                                    </ul>
+                                    <li><a>Shop<i class="fa fa-angle-down"></i></a>
+                                        <ul class="sub_menu pages">
+                                            <?php foreach ($categories as $category) : ?>
+                                                 <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
+                                            <?php endforeach; ?>
+                                         </ul>
+                                    </li>
                                 </li>
                                 <li class="menu-item-has-children">
                                     <a href="about.php">About Us</a>
@@ -172,8 +166,8 @@ $categories=getCategoryByID($conn);
                                             </li>
                                             <li><a>Shop<i class="fa fa-angle-down"></i></a>
                                                 <ul class="sub_menu pages">
-                                                    <?php foreach($categories as $category) :?>
-                                                    <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
+                                                    <?php foreach ($categories as $category) : ?>
+                                                        <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
                                                     <?php endforeach; ?>
                                                 </ul>
                                             </li>

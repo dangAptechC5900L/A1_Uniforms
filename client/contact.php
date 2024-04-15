@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once('../function.php');
 global $conn;
 initConnection();
@@ -36,6 +37,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "<script>alert('" . $error_message . "');</script>";
     }
 }
+
+function getCategoryByID($conn)
+{
+    $sql = "SELECT * FROM category";
+    $result = $conn->query($sql);
+
+    $categories = []; // Khởi tạo mảng chứa dữ liệu
+
+    if ($result->num_rows > 0) {
+        // Duyệt qua từng hàng kết quả và lưu vào mảng
+        while ($row = $result->fetch_assoc()) {
+            $categories[] = $row; // Thêm dữ liệu của hàng vào mảng categories
+        }
+    }
+
+    return $categories; // Trả về mảng categories
+}
+
+$categories = getCategoryByID($conn);
 ?>
 
 <!doctype html>
@@ -49,11 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="../assets/img/favicon.svg">
-
-
-    <!-- CSS 
-    ========================= -->
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Plugins CSS -->
     <link rel="stylesheet" href="../assets/css/plugins.css">
@@ -83,8 +99,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="search_bar">
                             <form method="GET" action="searchResults.php">
                                 <input type="text" name="searchTerm" placeholder="Enter the product name...">
-                                <button type="submit">Tìm kiếm</button>
+                                <button type="submit"><i class="ion-ios-search-strong"></i></button>
                             </form>
+                        </div>
+                        <div class="cart_area">
+                            <div class="middel_links">
+                                <ul>
+                                    <?php
+                                    if (isset($_SESSION['customer_name'])) {
+                                        echo '<li><i class="fa-solid fa-user"></i>  &nbsp;' . $_SESSION['customer_name'] . ' &nbsp; &nbsp;<a href="logout.php">Logout</a></li>';
+                                    } else {
+                                        echo '<li><a href="login.php">Login</a></li>';
+                                        echo '<li>/</li>';
+                                        echo '<li><a href="register.php">Register</a></li>';
+                                    }
+                                    ?>
+                                </ul>
+                            </div>
                         </div>
                         <div class="contact_phone">
                             <p>Call Free Support: <a href="tel:01234567890">01234567890</a></p>
@@ -95,20 +126,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <a href="index.php">Home</a>
                                 </li>
                                 <li class="menu-item-has-children">
-                                    <a href="shop.php">Shop</a>
-                                    <ul class="sub-menu">
-                                        <li><a href="shop.html">shop</a></li>
-                                        <li><a href="productByCategory.php?category_id=1">Shirts</a></li>
-                                        <li><a href="productByCategory.php?category_id=2">Skirts</a></li>
-                                        <li><a href="productByCategory.php?category_id=3">Frocks </a></li>
-                                        <li><a href="productByCategory.php?category_id=4"> P.T. T-shirts</a></li>
-                                        <li><a href="productByCategory.php?category_id=5">P.T. shorts</a></li>
-                                        <li><a href="productByCategory.php?category_id=6">P.T. track pants</a></li>
-                                        <li><a href="productByCategory.php?category_id=7">Belts</a></li>
-                                        <li><a href="productByCategory.php?category_id=8">Ties</a></li>
-                                        <li><a href="productByCategory.php?category_id=9">Logos</a></li>
-                                        <li><a href="productByCategory.php?category_id=10">Socks</a></li>
+                                <li><a>Shop<i class="fa fa-angle-down"></i></a>
+                                    <ul class="sub_menu pages">
+                                        <?php foreach ($categories as $category) : ?>
+                                            <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
+                                        <?php endforeach; ?>
                                     </ul>
+                                </li>
                                 </li>
                                 <li class="menu-item-has-children">
                                     <a href="about.php">About Us</a>
@@ -155,6 +179,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6 offset-md-6 offset-lg-0">
+                        <div class="cart_area">
+                            <div class="middel_links">
+                                <ul>
+                                    <?php
+                                    if (isset($_SESSION['customer_name'])) {
+                                        echo '<li><i class="fa-solid fa-user"></i>  &nbsp;' . $_SESSION['customer_name'] . ' &nbsp; &nbsp;<a href="logout.php">Logout</a></li>';
+                                    } else {
+                                        echo '<li><a href="login.php">Login</a></li>';
+                                        echo '<li>/</li>';
+                                        echo '<li><a href="register.php">Register</a></li>';
+                                    }
+                                    ?>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -173,19 +212,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <ul>
                                             <li><a href="index.php">Home</a>
                                             </li>
-                                            <li><a href="shop.php">Shop<i class="fa fa-angle-down"></i></a>
+                                            <li><a>Shop<i class="fa fa-angle-down"></i></a>
                                                 <ul class="sub_menu pages">
-
-                                                    <li><a href="productByCategory.php?category_id=1">Shirts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=2">Skirts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=3">Frocks </a></li>
-                                                    <li><a href="productByCategory.php?category_id=4"> P.T. T-shirts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=5">P.T. shorts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=6">P.T. track pants</a></li>
-                                                    <li><a href="productByCategory.php?category_id=7">Belts</a></li>
-                                                    <li><a href="productByCategory.php?category_id=8">Ties</a></li>
-                                                    <li><a href="productByCategory.php?category_id=9">Logos</a></li>
-                                                    <li><a href="productByCategory.php?category_id=10">Socks</a></li>
+                                                    <?php foreach ($categories as $category) : ?>
+                                                        <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
+                                                    <?php endforeach; ?>
                                                 </ul>
                                             </li>
                                             <li class="active"><a href="about.php">About us</a></li>
@@ -443,13 +474,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </footer>
     <!--footer area end-->
 
-    <!-- JS
-============================================ -->
-    <!-- Plugins JS -->
-    <!-- <script src="assets/js/plugins.js"></script> -->
-
-    <!-- Main JS -->
-    <!-- <script src="assets/js/main.js"></script> -->
+    <script src="../assets/js/plugins.js"></script>
+    <script src="../assets/js/main.js"></script>
 
 
 

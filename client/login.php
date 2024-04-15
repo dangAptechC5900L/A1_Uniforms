@@ -110,23 +110,14 @@ $categories=getCategoryByID($conn);
                         </div>
                         <div id="menu" class="text-left ">
                             <ul class="offcanvas_main_menu">
-                                <li class="menu-item-has-children active">
-                                    <a href="index.php">Home</a>
-                                </li>
-                                <li class="menu-item-has-children">
-                                    <a href="shop.php">Shop</a>
-                                    <ul class="sub-menu">
-                                        <li><a href="shop.php#Shirts">Shirts</a></li>
-                                        <li><a href="shop.php#Skirts">Skirts</a></li>
-                                        <li><a href="shop.php#Frocks">Frocks</a></li>
-                                        <li><a href="shop.php#P-T-T-shirts">P.T.T.shirts</a></li>
-                                        <li><a href="shop.php#P-T-shorts">P.T.shorts</a></li>
-                                        <li><a href="shop.php#P-T-track-pants">P.T.track-pants</a></li>
-                                        <li><a href="shop.php#Belts">Belts</a></li>
-                                        <li><a href="shop.php#Ties">Ties</a></li>
-                                        <li><a href="shop.php#Logos">Logos</a></li>
-                                        <li><a href="shop.php#Socks">Socks</a></li>
+                            <li class="menu-item-has-children">
+                                <li><a>Shop<i class="fa fa-angle-down"></i></a>
+                                    <ul class="sub_menu pages">
+                                        <?php foreach ($categories as $category) : ?>
+                                            <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
+                                        <?php endforeach; ?>
                                     </ul>
+                                </li>
                                 </li>
                                 <li class="menu-item-has-children">
                                     <a href="about.php">About Us</a>
@@ -170,6 +161,21 @@ $categories=getCategoryByID($conn);
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6 offset-md-6 offset-lg-0">
+                        <div class="cart_area">
+                            <div class="middel_links">
+                                <ul>
+                                    <?php
+                                    if (isset($_SESSION['customer_name'])) {
+                                        echo '<li><i class="fa-solid fa-user"></i>  &nbsp;' . $_SESSION['customer_name'] . ' &nbsp; &nbsp;<a href="logout.php">Logout</a></li>';
+                                    } else {
+                                        echo '<li><a href="login.php">Login</a></li>';
+                                        echo '<li>/</li>';
+                                        echo '<li><a href="register.php">Register</a></li>';
+                                    }
+                                    ?>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -357,8 +363,8 @@ $categories=getCategoryByID($conn);
             }
         });
     </script> -->
-    <script src="assets/js/plugins.js"></script>
-    <script src="assets/js/main.js"></script>
+    <script src="../assets/js/plugins.js"></script>
+    <script src="../assets/js/main.js"></script>
 
 
 

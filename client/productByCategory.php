@@ -153,13 +153,9 @@ function getCategoryByID($conn)
                         </div>
 
                         <div class="search_bar">
-                            <!-- <form action="#">
-                                <input placeholder="Search entire product here..." type="text">
-                                <button type="submit"><i class="ion-ios-search-strong"></i></button>
-                            </form> -->
                             <form method="GET" action="searchResults.php">
                                 <input type="text" name="searchTerm" placeholder="Enter the product name...">
-                                <button type="submit">Tìm kiếm</button>
+                                <button type="submit"><i class="ion-ios-search-strong"></i></button>
                             </form>
                         </div>
 
@@ -188,19 +184,13 @@ function getCategoryByID($conn)
                                     <a href="index.php">Home</a>
                                 </li>
                                 <li class="menu-item-has-children">
-                                    <a href="shop-fullwidth.html">Shop</a>
-                                    <ul class="sub-menu">
-                                        <li><a href="productByCategory.php?category_id=1">Shirts</a></li>
-                                        <li><a href="productByCategory.php?category_id=2">Skirts</a></li>
-                                        <li><a href="shop-fullwidth.php?category_id=3">Frocks </a></li>
-                                        <li><a href="shop-fullwidth.php?category_id=4"> P.T. T-shirts</a></li>
-                                        <li><a href="shop-fullwidth.php?category_id=5">P.T. shorts</a></li>
-                                        <li><a href="shop-fullwidth.php?category_id=6">P.T. track pants</a></li>
-                                        <li><a href="shop-fullwidth.php?category_id=7">Belts</a></li>
-                                        <li><a href="shop-fullwidth.php?category_id=8">Ties</a></li>
-                                        <li><a href="shop-fullwidth.php?category_id=9">Logos</a></li>
-                                        <li><a href="shop-fullwidth.php?category_id=10">Socks</a></li>
+                                <li><a>Shop<i class="fa fa-angle-down"></i></a>
+                                    <ul class="sub_menu pages">
+                                        <?php foreach ($categories as $category) : ?>
+                                            <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
+                                        <?php endforeach; ?>
                                     </ul>
+                                </li>
                                 </li>
                                 <li class="menu-item-has-children">
                                     <a href="about.php">About Us</a>
@@ -392,7 +382,7 @@ function getCategoryByID($conn)
                                     </div>
                                 <?php endforeach; ?>
                             <?php else : ?>
-                                <h3 style="color:red; text-align:center; align-items:center; font-size:30px; padding-top: 70px;">Không có sản phẩm tương ứng</h3>
+                                <h3 style="color:red; text-align:center; align-items:center; font-size:30px; padding-top: 70px;">No Products Found</h3>
                             <?php endif; ?>
                         </div>
                         <!--shop toolbar end-->
@@ -535,10 +525,10 @@ function getCategoryByID($conn)
 ============================================ -->
 
     <!-- Plugins JS -->
-    <script src="assets/js/plugins.js"></script>
+    <script src="../assets/js/plugins.js"></script>
 
     <!-- Main JS -->
-    <script src="assets/js/main.js"></script>
+    <script src="../assets/js/main.js"></script>
 
 
 
