@@ -190,14 +190,13 @@ $categories = getCategoryByID($conn);
     </header>
 
     <div class="slider_area slider_style owl-carousel">
-        <div class="single_slider" data-bgimg="../assets/img/slider/slide3.png">
+        <div class="single_slider" data-bgimg="../assets/img/slider/banner3.jpg">
             <div class="container-fluid">
                 <div class="row align-items-center">
                     <div class="col-12">
                         <div class="slider_content content_three">
-                            <img src="../assets/img/slider/content2.png" alt="">
-                            <p>the wooboom clothing summer collection is back at half price</p>
-                            <a href="shop.php">Discover Now</a>
+                            
+                          
                         </div>
                     </div>
                 </div>

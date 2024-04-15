@@ -9,8 +9,8 @@ $conn = initConnection();
 $customer_id = isset($_SESSION['customer_id']) ? $_SESSION['customer_id'] : null;
 
 // Lấy giá trị category_id từ tham số truy vấn
-$category_id = $_GET['category_id'];
-$product_id = $_GET['product_id'];
+$category_id = isset($_GET['category_id']) ? $_GET['category_id'] : null;
+$product_id = isset($_GET['product_id']) ? $_GET['product_id'] : null;
 
 // Lấy giá trị trang hiện tại từ tham số truy vấn (mặc định là trang 1 nếu không có tham số truy vấn)
 $currentpage = isset($_GET['page']) ? $_GET['page'] : 1;
