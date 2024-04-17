@@ -589,9 +589,10 @@ $rows = getTotalAboutUs($conn);
 												</div>
 											</th>
 											<!-- <th>ID</th> -->
-											<th>Title</th>
+											<th>Subject</th>
 											<th>Email</th>
 											<th>Description</th>
+											<th>Contact_Date</th>
 											<th>Status</th>
 											<th>Functions</th>
 										</tr>
@@ -600,7 +601,6 @@ $rows = getTotalAboutUs($conn);
 
 									<tbody>
 										<?php
-										// Kiểm tra xem có kết quả tìm kiếm không
 										if (!empty($contactUs_Search)) {
 											foreach ($contactUs_Search as $contact_Us_Search) {
 										?>
@@ -620,8 +620,9 @@ $rows = getTotalAboutUs($conn);
 												<td>
 													<p><?php echo $contact_Us_Search['subject'] ?></p>
 												</td>
-												
-
+												<td>
+													<p><?php echo $contact_Us_Search['contact_date'] ?></p>
+												</td>
 												<td>
 													<div class="btn-group">
 														<form action="contact_us-list.php" method="post">
@@ -644,7 +645,6 @@ $rows = getTotalAboutUs($conn);
 											<?php
 											}
 										} else {
-											// Nếu không có kết quả tìm kiếm, hiển thị danh sách tất cả khách hàng
 											foreach ($contact_us as $contact_Us) {
 											?>
 												<tr>
@@ -663,7 +663,9 @@ $rows = getTotalAboutUs($conn);
 												<td>
 													<p><?php echo $contact_Us['subject'] ?></p>
 												</td>
-												
+												<td>
+													<p><?php echo $contact_Us['contact_date'] ?></p>
+												</td>
 												<td>
 													<div class="btn-group">
 														<form action="contact_us-list.php" method="post">
@@ -736,31 +738,6 @@ $rows = getTotalAboutUs($conn);
         Main wrapper end
     ***********************************-->
 
-	<!--**********************************
-        Scripts
-    ***********************************-->
-	<!-- <script>
-    function changeStatus(customer_id, new_status) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                if (this.responseText == "success") {
-                    // Nếu thành công, cập nhật giao diện người dùng
-                    var btnId = (new_status == 1) ? "activeBtn_" + customer_id : "inactiveBtn_" + customer_id;
-                    var btnText = (new_status == 1) ? "Active" : "Inactive";
-                    document.getElementById(btnId).innerHTML = btnText;
-                    document.getElementById(btnId).classList.toggle("btn-success");
-                    document.getElementById(btnId).classList.toggle("btn-secondary");
-                } else {
-                    alert("Có lỗi xảy ra khi cập nhật trạng thái!");
-                }
-            }
-        };
-        xhttp.open("POST", "customer-list.php", true);
-        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhttp.send("customer_id=" + customer_id + "&new_status=" + new_status);
-    }
-</script> -->
 
 	<!-- Required vendors -->
 	<script src="vendor/global/global.min.js"></script>
@@ -779,7 +756,7 @@ $rows = getTotalAboutUs($conn);
 	<script src="js/custom.min.js"></script>
 	<script src="js/deznav-init.js"></script>
 	<script src="js/demo.js"></script>
-	<script src="js/styleSwitcher.js"></script>
+	<!-- <script src="js/styleSwitcher.js"></script> -->
 	<script>
 		// Lấy tất cả các nút "edit"
 var editButtons = document.querySelectorAll('.edit-button');

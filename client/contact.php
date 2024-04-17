@@ -10,6 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $subject = $_POST['subject'];
     $phone = $_POST['phone'];
     $message = $_POST['message'];
+    $is_Deleted=1;
+    $contactDate = date('Y-m-d H:i:s'); // Lấy thời gian hiện tại
     if (empty($email)) {
         $errors[] = "Email must be provided";
     }
@@ -20,9 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $errors[] = "Phone number must start with 0 and be followed by 9 digits";
     }
     if (count($errors) == 0) {
-        $query_string = "INSERT INTO contact (fullname, email, subject, phone_number, message ) VALUES (?, ?, ?, ?, ?)";
+        $query_string = "INSERT INTO contact (fullname, email, subject, phone_number, message, contact_date, isDeleted ) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($query_string);
-        $stmt->bind_param('sssds', $username, $email, $subject, $phone, $message);
+        $stmt->bind_param('sssdssi', $username, $email, $subject, $phone, $message, $contactDate, $is_Deleted );
         $stmt->execute();
         if ($stmt->affected_rows > 0) {
             echo "<script>alert('Contact Successfully');</script>";

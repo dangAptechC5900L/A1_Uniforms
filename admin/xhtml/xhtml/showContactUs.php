@@ -33,7 +33,7 @@ function getContactById($conn, $contact_id)
 
 <head>
     <!-- Title -->
-    <title>A-1 uniforms - home</title>
+    <title>A-1 uniforms</title>
 
     <!-- Meta -->
     <meta charset="utf-8">
@@ -138,7 +138,7 @@ function getContactById($conn, $contact_id)
                     <div class="collapse navbar-collapse justify-content-between">
                         <div class="header-left">
                             <div class="dashboard_bar">
-                                Update Customers
+                                 Contact Information
                             </div>
                         </div>
 
@@ -488,7 +488,7 @@ function getContactById($conn, $contact_id)
                     <div class="col-xl-12">
                         <div class="card  card-bx m-b30">
                             <div class="card-header bg-primary">
-                                <h6 class="title text-white">Edit Customer</h6>
+                                <h6 class="title text-white">Contact Information</h6>
                                 <a href="contact_us-list.php" class="btn-close" aria-label="Close"></a> <!-- Thêm nút "X" để đóng pop-up -->
                             </div>
 
@@ -506,23 +506,23 @@ function getContactById($conn, $contact_id)
 
                                         <div class="col-sm-12 mb-3">
                                             <label class="form-label required">Email</label>
-                                            <input type="text" name="firstName" class="form-control" value="<?php echo $contact['email']; ?>">
+                                            <input type="text" name="firstName" class="form-control" value="<?php echo $contact['email']; ?>" readonly>
                                         </div>
                                         <div class="col-sm-12 mb-3">
                                             <label class="form-label required">Subject</label>
-                                            <input type="text" name="middleName" class="form-control" value="<?php echo $contact['subject']; ?>">
+                                            <input type="text" name="middleName" class="form-control" value="<?php echo $contact['subject']; ?>" readonly>
                                         </div>
                                         <div class="col-sm-12 mb-3">
                                             <label class="form-label required">Phone number</label>
-                                            <input type="text" name="lastName" class="form-control" value="<?php echo $contact['phone_number']; ?>">
+                                            <input type="text" name="lastName" class="form-control" value="<?php echo $contact['phone_number']; ?>" readonly>
                                         </div>
                                         <div class="col-sm-12 mb-3">
                                             <label class="form-label required">Message</label>
-                                            <input type="email" name="email" class="form-control" value="<?php echo $contact['message']; ?>">
+                                            <input type="email" name="email" class="form-control" value="<?php echo $contact['message']; ?>" readonly>
                                         </div>
                                         <div class="col-sm-12 mb-3">
                                             <label class="form-label required">Contact Date</label>
-                                            <input type="text" name="phoneNumber" class="form-control" value="<?php echo $contact['contact_date']; ?>">
+                                            <input type="text" name="phoneNumber" class="form-control" value="<?php echo $contact['contact_date']; ?>" readonly>
                                         </div>
 
                                     </div>
@@ -587,7 +587,7 @@ function getContactById($conn, $contact_id)
     <script src="js/custom.min.js"></script>
     <script src="js/deznav-init.js"></script>
     <script src="js/demo.js"></script>
-    <script src="js/styleSwitcher.js"></script>
+    <!-- <script src="js/styleSwitcher.js"></script> -->
 
 
 

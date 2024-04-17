@@ -278,7 +278,7 @@ function searchProductByName($conn, $searchTerm)
                                         <div class="single_product">
                                             <div class="product_thumb">
                                                 <a class="primary_img" href="product-details.php?product_id=<?php echo $product['product_id']; ?>">
-                                                    <img src="<?php echo $product['avata_product']; ?>" alt="Product Image">
+                                                    <img src="<?php echo $product['avatar_product']; ?>" alt="Product Image">
                                                 </a>
                                                 <!-- <a class="secondary_img" href="product-details.html"><img src="assets/img/product/product16.jpg" alt=""></a> -->
 

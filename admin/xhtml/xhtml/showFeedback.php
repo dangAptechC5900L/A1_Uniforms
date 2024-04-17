@@ -7,61 +7,44 @@ include '../../../function.php';
 $conn = initConnection();
 
 // $customer_id = $_GET['customer_id'];
-$category_id = $_GET['category_id'] ?? null;
+$feedback_id = $_GET['feedback_id'] ?? null;
 
 
-editCategory($conn, $category_id);
+$feedbacks = getContactById($conn, $feedback_id);
 
-
-$category = getCategoryById($conn, $category_id);
-
-function getCategoryById($conn, $category_id)
+function getContactById($conn,$feedback_id)
 {
-    $sql = "SELECT * FROM category WHERE category_id=?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('i', $category_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $category = $result->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-    return $category;
+	// Chuẩn bị câu truy vấn SQL với prepared statement
+	$sql = "SELECT f.feedback_id, p.product_name, c.customer_name, f.title, f.description, f.feedbackDate, f.isDeleted, f.star_rating
+FROM feedback f
+JOIN product p ON f.product_id = p.product_id
+JOIN customer c ON f.customer_id = c.customer_id
+WHERE feedback_id=?";
+// Tạo prepared statement
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $feedback_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$feedbacks = $result->fetch_all(MYSQLI_ASSOC);
+	return $feedbacks;
 }
+// function getAllFeedback($conn)
+// {
+// 	$sql = "SELECT * FROM feedback";
+// 	$stmt = $conn->prepare($sql);
+// 	$stmt->execute();
+// 	$result = $stmt->get_result();
 
-function editCategory($conn, $category_id)
-{
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $category_name = $_POST["name"];
-        $description = $_POST["description"];
+// 	$feedbacks = array();
+// 	if ($result && $result->num_rows > 0) {
+// 		while ($row = $result->fetch_assoc()) {
+// 			$feedbacks[] = $row;
+// 		}
+// 	}
+// 	$stmt->close();
 
-        if (empty($category_name) || empty($description)) {
-			echo "Please fill in all information.";
-			return;
-		}
-
-		$product_id=0;
-		$isDeleted = false;
-
-        $sql = "UPDATE category SET name=?,description=?,isDeleted=?,product_id=? WHERE category_id=?";
-
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssiii",  $category_name, $description, $isDeleted, $product_id, $category_id);
-        //   $stmt->bind_param("sssssssii", $hashedPassword, $firstName,  $lastName,$customer_id);
-        $stmt->execute();
-
-
-       // Thực hiện truy vấn
-		if ($stmt->execute()) {
-			echo "Add Category Success";
-			header("Location:category-list.php");
-		} else {
-			echo "Error! " . $stmt->error;
-		}
-
-		// Đóng kết nối tới cơ sở dữ liệu
-		$stmt->close();
-    }
-}
+// 	return $feedbacks;
+// }
 
 
 
@@ -72,7 +55,7 @@ function editCategory($conn, $category_id)
 
 <head>
     <!-- Title -->
-    <title>A-1 uniforms - home</title>
+    <title>A-1 uniforms</title>
 
     <!-- Meta -->
     <meta charset="utf-8">
@@ -96,7 +79,7 @@ function editCategory($conn, $category_id)
     <!-- MOBILE SPECIFIC -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Favicon icon -->
-   
+
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
     <link href="vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link href="vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
@@ -123,7 +106,8 @@ function editCategory($conn, $category_id)
     .btn-close:hover {
         color: #ccc;
     }
-    </style>
+</style>
+
 
 </head>
 
@@ -176,7 +160,7 @@ function editCategory($conn, $category_id)
                     <div class="collapse navbar-collapse justify-content-between">
                         <div class="header-left">
                             <div class="dashboard_bar">
-                                Update Category
+                                 Feedback Information
                             </div>
                         </div>
 
@@ -526,31 +510,44 @@ function editCategory($conn, $category_id)
                     <div class="col-xl-12">
                         <div class="card  card-bx m-b30">
                             <div class="card-header bg-primary">
-                                <h6 class="title text-white">Edit Category</h6>
+                                <h6 class="title text-white">Feedback Information</h6>
+                                <a href="feedback-list.php" class="btn-close" aria-label="Close"></a> <!-- Thêm nút "X" để đóng pop-up -->
                             </div>
 
-                            <?php foreach ($category as $category) {
+
+                            <?php foreach ($feedbacks as $feedback) {
                             ?>
-                                <form class="profile-form" action="edit-category.php?category_id=<?php echo $category['category_id']; ?>" method="post" onsubmit="return validateForm();">
-                                    <div class="card-body">
-                                        <div class="row">
+
+                                <div class="card-body">
+                                    <div class="row">
+
                                         <div class="col-sm-12 mb-3">
-											<label class=" form-label required">Name</label>
-											<input type="text" name="name" class="form-control" placeholder="Enter name category..." value="<?php echo $category['name'] ?>">
-										</div>
+                                            <label class="form-label required">Product_name</label>
+                                            <input type="text" name="userName" class="form-control" value="<?php echo $feedback['product_name']; ?>" readonly>
+                                        </div>
+
+                                        <div class="col-sm-12 mb-3">
+                                            <label class="form-label required">Customer_name</label>
+                                            <input type="text" name="firstName" class="form-control" value="<?php echo $feedback['customer_name']; ?>" readonly>
+                                        </div>
+                                        <div class="col-sm-12 mb-3">
+                                            <label class="form-label required">Description</label>
+                                            <input type="text" name="middleName" class="form-control" value="<?php echo $feedback['description']; ?>" readonly>
+                                        </div>
+                                        <div class="col-sm-12 mb-3">
+                                            <label class="form-label required">Feedback_Date</label>
+                                            <input type="text" name="lastName" class="form-control" value="<?php echo $feedback['feedbackDate']; ?>" readonly>
+                                        </div>
+                                        <div class="col-sm-12 mb-3">
+                                            <label class="form-label required">Star_rating</label>
+                                            <input type="email" name="email" class="form-control" value="<?php echo $feedback['star_rating']; ?>" readonly>
+                                        </div>
                                        
 
-                                            <div class="col-sm-12 mb-3">
-                                                <label class="form-label required">Description</label>
-                                                <input type="text" name="description" class="form-control" placeholder="Enter description..." value="<?php echo $category['description']; ?>" >
-                                            </div>
-                                           
-                                        </div>
                                     </div>
-                                    <div class="card-footer justify-content-end">
-                                        <button class="btn btn-primary">Update Category</button>
-                                    </div>
-                                </form>
+                                </div>
+
+
                             <?php }
                             ?>
                         </div>
@@ -611,38 +608,9 @@ function editCategory($conn, $category_id)
     <script src="js/demo.js"></script>
     <!-- <script src="js/styleSwitcher.js"></script> -->
 
-   
 
-    <script type="text/javascript">
-        function handleSuccess(customer_id) {
-            $(document).ready(function(){
-            swal({
-                icon: 'success',
-                title: 'Sửa thông tin khách hàng thành công',
-                showConfirmButton: false,
-                
-            }).then(function() {
-                window.location.href = 'customer-list.php';
-            });
-        });
 
-        }
-    </script>
-    <script>
-        function validateForm() {
-            var categoryName = document.getElementsByName("name")[0].value;
-            var description = document.getElementsByName("description")[0].value;
-       
-
-            // Kiểm tra trường rỗng
-            if (categoryName == "" || description == "" ) {
-                swal("Error!", "Please complete all information.", "error");
-                return false;
-            }
-
-            return true;
-        }
-    </script>
+    
 
 </body>
 

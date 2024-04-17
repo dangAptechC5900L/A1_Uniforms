@@ -6,60 +6,70 @@ include '../../../function.php';
 
 $conn = initConnection();
 
-// $customer_id = $_GET['customer_id'];
-$category_id = $_GET['category_id'] ?? null;
+
+$product_id = $_GET['product_id'] ?? null;
 
 
-editCategory($conn, $category_id);
+editCustomer($conn, $customer_id);
+$products = getProductById($conn, $product_id);
 
-
-$category = getCategoryById($conn, $category_id);
-
-function getCategoryById($conn, $category_id)
+function getProductById($conn, $product_id)
 {
-    $sql = "SELECT * FROM category WHERE category_id=?";
+    $sql = "SELECT * FROM product WHERE product_id=?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('i', $category_id);
+    $stmt->bind_param('i', $product_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    $category = $result->fetch_all(MYSQLI_ASSOC);
+    $products = $result->fetch_all(MYSQLI_ASSOC);
     $stmt->close();
-    return $category;
+    return $products;
 }
 
-function editCategory($conn, $category_id)
+function editCustomer($conn, $customer_id)
 {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $category_name = $_POST["name"];
-        $description = $_POST["description"];
+        $userName = $_POST["userName"];
+        $password = $_POST["customer_password"];
+        $firstName = $_POST["firstName"];
+        $middleName = $_POST["middleName"];
+        $lastName = $_POST["lastName"];
+        $email = $_POST["email"];
+        $phoneNumber = $_POST["phoneNumber"];
+        $address = $_POST["address"];
 
-        if (empty($category_name) || empty($description)) {
-			echo "Please fill in all information.";
-			return;
-		}
+        if (empty($userName) || empty($password) || empty($firstName) || empty($middleName) || empty($lastName) || empty($email) || empty($phoneNumber) || empty($address)) {
+            echo "Vui lòng điền đầy đủ thông tin.";
+            return;
+        }
 
-		$product_id=0;
-		$isDeleted = false;
+        // Kiểm tra các trường first_name, last_name, middle_name chỉ chứa ký tự
+        if (!preg_match('/^[a-zA-Z]+$/', $firstName) || !preg_match('/^[a-zA-Z]+$/', $middleName) || !preg_match('/^[a-zA-Z]+$/', $lastName)) {
+            echo "The 'first_name','middle_name','last_name' field only allows names, numbers are not allowed.";
+            return;
+        }
 
-        $sql = "UPDATE category SET name=?,description=?,isDeleted=?,product_id=? WHERE category_id=?";
+        // Mã hóa mật khẩu sử dụng sha1
+        $hashedPassword = sha1($password);
+        $isDeleted = false;
 
+        $sql = "UPDATE customer SET password=?,first_name=?,last_name=?,middle_name=?,email=?,phone_number=?,address=?,isDeleted=? WHERE customer_id=?";
+        // $sql = "UPDATE customer SET username=?,password=?,first_name=?,last_name=?,middle_name=?,email=?,phone_number=?,address=?,isDeleted=? WHERE customer_id=?";
+
+        //  VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssiii",  $category_name, $description, $isDeleted, $product_id, $category_id);
+        $stmt->bind_param("sssssssii",  $hashedPassword, $firstName, $lastName, $middleName, $email, $phoneNumber, $address, $isDeleted, $customer_id);
         //   $stmt->bind_param("sssssssii", $hashedPassword, $firstName,  $lastName,$customer_id);
         $stmt->execute();
 
 
-       // Thực hiện truy vấn
-		if ($stmt->execute()) {
-			echo "Add Category Success";
-			header("Location:category-list.php");
-		} else {
-			echo "Error! " . $stmt->error;
-		}
-
-		// Đóng kết nối tới cơ sở dữ liệu
-		$stmt->close();
+        if ($stmt->execute()) {
+            echo "Thêm khách hàng thành công";
+        } else {
+            echo "Lỗi khi sửa thông tin khách hàng: " . $stmt->error;
+        }
+        // Đóng kết nối tới cơ sở dữ liệu
+        $stmt->close();
     }
 }
 
@@ -72,7 +82,7 @@ function editCategory($conn, $category_id)
 
 <head>
     <!-- Title -->
-    <title>A-1 uniforms - home</title>
+    <title>A-1 uniforms - Edit Product</title>
 
     <!-- Meta -->
     <meta charset="utf-8">
@@ -96,7 +106,7 @@ function editCategory($conn, $category_id)
     <!-- MOBILE SPECIFIC -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Favicon icon -->
-   
+
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
     <link href="vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link href="vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
@@ -108,22 +118,6 @@ function editCategory($conn, $category_id)
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/sweetalert2.min.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-    <style>
-    /* CSS cho nút "X" */
-    .btn-close {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 20px;
-        color: #fff;
-    }
-
-    /* CSS để tạo hiệu ứng khi di chuột vào nút */
-    .btn-close:hover {
-        color: #ccc;
-    }
-    </style>
 
 </head>
 
@@ -176,7 +170,7 @@ function editCategory($conn, $category_id)
                     <div class="collapse navbar-collapse justify-content-between">
                         <div class="header-left">
                             <div class="dashboard_bar">
-                                Update Category
+                                Update Product
                             </div>
                         </div>
 
@@ -526,29 +520,71 @@ function editCategory($conn, $category_id)
                     <div class="col-xl-12">
                         <div class="card  card-bx m-b30">
                             <div class="card-header bg-primary">
-                                <h6 class="title text-white">Edit Category</h6>
+                                <h6 class="title text-white">Edit Product</h6>
                             </div>
 
-                            <?php foreach ($category as $category) {
+                            <?php foreach ($products as $product) {
                             ?>
-                                <form class="profile-form" action="edit-category.php?category_id=<?php echo $category['category_id']; ?>" method="post" onsubmit="return validateForm();">
+                                <form class="profile-form" action="edit-product.php?product_id=<?php echo $product['product_id']; ?>" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
                                     <div class="card-body">
                                         <div class="row">
-                                        <div class="col-sm-12 mb-3">
-											<label class=" form-label required">Name</label>
-											<input type="text" name="name" class="form-control" placeholder="Enter name category..." value="<?php echo $category['name'] ?>">
-										</div>
-                                       
 
                                             <div class="col-sm-12 mb-3">
-                                                <label class="form-label required">Description</label>
-                                                <input type="text" name="description" class="form-control" placeholder="Enter description..." value="<?php echo $category['description']; ?>" >
+                                                <label class="form-label required">Name Product</label>
+                                                <input type="text" name="name" class="form-control" placeholder="Enter Name Product..." value="<?php echo $product['product_name']; ?>" readonly>
                                             </div>
-                                           
+                                            <div class="col-sm-12 mb-3">
+                                                <label class="form-label required">Price</label>
+                                                <input type="number" name="price" class="form-control" value="<?php echo $product['price']; ?>">
+                                            </div>
+                                            <div class="col-sm-12 mb-3">
+                                                <label class="form-label required">Image</label>
+                                                <!-- Hiển thị tên file đã chọn -->
+                                                <?php if (isset($_GET['selected_file'])) : ?>
+                                                    <p><?php echo $_GET['selected_file']; ?></p>
+                                                <?php endif; ?>
+                                                <!-- Input để chọn file mới -->
+                                                <input type="file" name="image" class="form-control" accept="image/*">
+                                            </div>
+                                            <div class="col-sm-12 mb-3">
+                                                <label class="form-label required">Color</label>
+                                                <input type="text" name="color" class="form-control" placeholder="Enter color..." value="<?php echo $product['arr_color']; ?>">
+                                            </div>
+                                            <div class="col-sm-12 mb-3">
+                                                <label class="form-label required">Material</label>
+                                                <input type="text" name="material" class="form-control" placeholder="Enter material..." value="<?php echo $product['material']; ?>">
+                                            </div>
+                                            <div class="col-sm-12 mb-3">
+                                                <label class="form-label required">Description</label>
+                                                <input type="text" name="description" class="form-control" placeholder="Enter Description..." value="<?php echo $product['description']; ?>">
+                                            </div>
+                                            <div class="col-sm-12 mb-3">
+                                                <label class="form-label required">Create Date</label>
+                                                <input type="text" name="createDate" class="form-control" value="<?php echo $product['create_date']; ?>" readonly>
+                                            </div>
+                                            <div class="col-sm-12 mb-3">
+                                                <label class="form-label required">Size</label>
+                                                <select class="form-select" id="size" name="size[]" multiple style="height: auto; padding: 0.375rem 2.25rem 0.375rem 0.75rem;">
+                                                    <?php
+                                                    $sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+                                                    foreach ($sizes as $size) {
+                                                        if (in_array($size, explode(', ', $product['size']))) {
+                                                            echo '<option selected>' . $size . '</option>';
+                                                        } else {
+                                                            echo '<option>' . $size . '</option>';
+                                                        }
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-12 mb-3">
+                                                <label class="form-label required">Quantity</label>
+                                                <input type="number" name="quantity" class="form-control" value="<?php echo $product['quantity']; ?>">
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="card-footer justify-content-end">
-                                        <button class="btn btn-primary">Update Category</button>
+                                        <button class="btn btn-primary">Update Product</button>
                                     </div>
                                 </form>
                             <?php }
@@ -609,34 +645,63 @@ function editCategory($conn, $category_id)
     <script src="js/custom.min.js"></script>
     <script src="js/deznav-init.js"></script>
     <script src="js/demo.js"></script>
-    <!-- <script src="js/styleSwitcher.js"></script> -->
 
-   
+
+
 
     <script type="text/javascript">
         function handleSuccess(customer_id) {
-            $(document).ready(function(){
-            swal({
-                icon: 'success',
-                title: 'Sửa thông tin khách hàng thành công',
-                showConfirmButton: false,
-                
-            }).then(function() {
-                window.location.href = 'customer-list.php';
+            $(document).ready(function() {
+                swal({
+                    icon: 'success',
+                    title: 'Sửa thông tin khách hàng thành công',
+                    showConfirmButton: false,
+
+                }).then(function() {
+                    window.location.href = 'customer-list.php';
+                });
             });
-        });
 
         }
     </script>
     <script>
         function validateForm() {
-            var categoryName = document.getElementsByName("name")[0].value;
-            var description = document.getElementsByName("description")[0].value;
-       
+            var userName = document.getElementsByName("userName")[0].value;
+            var password = document.getElementsByName("customer_password")[0].value;
+            var firstName = document.getElementsByName("firstName")[0].value;
+            var lastName = document.getElementsByName("lastName")[0].value;
+            var middleName = document.getElementsByName("middleName")[0].value;
+            var email = document.getElementsByName("email")[0].value;
+            var phoneNumber = document.getElementsByName("phoneNumber")[0].value;
+            var address = document.getElementsByName("address")[0].value;
 
             // Kiểm tra trường rỗng
-            if (categoryName == "" || description == "" ) {
+            if (userName == "" || password == "" || firstName == "" || lastName == "" || middleName == "" || email == "" || phoneNumber == "" || address == "") {
                 swal("Error!", "Please complete all information.", "error");
+                return false;
+            }
+
+            // Kiểm tra first_name, last_name, middle_name chỉ chứa ký tự
+            var nameRegex = /^[a-zA-Z]+$/;
+            if (!nameRegex.test(firstName) || !nameRegex.test(lastName) || !nameRegex.test(middleName)) {
+                swal("Error!", "The 'first_name','middle_name','last_name' field only allows names, numbers are not allowed.", "error");
+                return false;
+            }
+
+            // Kiểm tra mật khẩu có ít nhất 8 ký tự và chứa ít nhất một ký tự chữ
+            if (password.length < 8 || !/[a-zA-Z]/.test(password)) {
+                swal("Error!", "Password must have at least 8 characters and at least one letter character.", "error");
+                return false;
+            }
+
+            // Kiểm tra số điện thoại theo kiểu Việt Nam
+            var phoneRegex = /^(0[1-9])+([0-9]{8})\b$/;
+            if (!phoneRegex.test(phoneNumber)) {
+                swal("Error!", "Invalid phone number.", "error");
+                return false;
+            }
+            if (!validateEmail(email)) {
+                swal("Error!", "Invalid email.", "error");
                 return false;
             }
 

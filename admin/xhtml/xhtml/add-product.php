@@ -4,48 +4,108 @@ include '../../../function.php';
 
 $conn = initConnection();
 
-addCustomers($conn);
+addProducts($conn);
 
-function addCustomers($conn)
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["image"])) {
+	if (isset($_FILES["image"])) {
+		// Đường dẫn thư mục lưu trữ ảnh
+		$targetDir = "uploads/";
+
+		// Tạo đường dẫn đầy đủ của file đã upload
+		$targetFilePath = $targetDir . basename($_FILES["image"]["name"]);
+
+		// Kiểm tra xem file đã tồn tại chưa
+		if (file_exists($targetFilePath)) {
+			echo "File đã tồn tại.";
+		} else {
+			// Kiểm tra xem file có phải là ảnh hợp lệ không
+			$imageFileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+			$allowedExtensions = array("jpg", "jpeg", "png", "gif");
+
+			if (in_array($imageFileType, $allowedExtensions)) {
+				// Thực hiện upload file
+				if (move_uploaded_file($_FILES["image"]["tmp_name"], $targetFilePath)) {
+					// Lưu đường dẫn của ảnh vào cơ sở dữ liệu
+					$imagePathInDB = $targetFilePath;
+
+					// Tiếp tục xử lý các trường khác và lưu vào cơ sở dữ liệu
+
+					// In thông báo nếu upload ảnh thành công
+					echo "File được tải lên thành công.";
+				} else {
+					echo "Đã xảy ra lỗi khi tải lên file.";
+				}
+			} else {
+				echo "Chỉ cho phép tải lên các file ảnh định dạng JPG, JPEG, PNG, GIF.";
+			}
+		}
+	}
+}
+
+function getCategory($conn)
+{
+	$sql = "SELECT * from category";
+	$stmt = $conn->prepare($sql);
+	$stmt->execute();
+
+	$result = $stmt->get_result();
+
+	$category = array();
+	if ($result && $result->num_rows > 0) {
+		while ($row = $result->fetch_assoc()) {
+			$category[] = $row;
+		}
+	}
+	$stmt->close();
+
+	return $category;
+}
+
+function addProducts($conn)
 {
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-		$category_name = $_POST["name"];
+		$category = $_POST["category"];
+		$product_name = $_POST["name"];
+		$price = $_POST["price"];
+		$image = $_FILES["image"]["name"];
+		$color = $_POST["color"];
+		$material = $_POST["material"];
 		$description = $_POST["description"];
+		$createDate = date('Y-m-d H:i:s');
+		$size = implode(", ", $_POST["size"]);
+		$quantity = $_POST["quantity"];
 
-		if (empty($category_name) || empty($description)) {
+		if (empty($category) || empty($product_name) || empty($price) || empty($image) || empty($color) || empty($material) || empty($description) || empty($createDate) || empty($size) || empty($quantity)) {
 			echo "Please fill in all information.";
 			return;
 		}
 
-		$parent_id=0;
 		$isDeleted = false;
-		$sql = "INSERT INTO category (name,  description, isDeleted, parent_id)
-        VALUES (?, ?, ?, ?)";
+		$sql = "INSERT INTO product (category_id, product_name, price, avatar_product, arr_color, material, description, isDeleted, create_date, size, quantity)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		$stmt = $conn->prepare($sql);
-		$stmt->bind_param("ssii", $category_name, $description, $isDeleted, $parent_id);
+		$stmt->bind_param("issssssssss", $category, $product_name, $price, $image, $color, $material, $description, $isDeleted, $createDate, $size, $quantity);
 
-
-		// Thực hiện truy vấn
 		if ($stmt->execute()) {
-			echo "Add Category Success";
-			header("Location:category-list.php");
+			echo "Add Product Success";
+			header("Location:product-list.php");
 		} else {
 			echo "Error! " . $stmt->error;
 		}
 
-		// Đóng kết nối tới cơ sở dữ liệu
 		$stmt->close();
 	}
 }
 
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 	<!-- Title -->
-	<title>A-1 uniforms - home</title>
+	<title>A-1 uniforms - Add Product</title>
 
 	<!-- Meta -->
 	<meta charset="utf-8">
@@ -78,20 +138,20 @@ function addCustomers($conn)
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 	<style>
-    /* CSS cho nút "X" */
-    .btn-close {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 20px;
-        color: #fff;
-    }
+		/* CSS cho nút "X" */
+		.btn-close {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			font-size: 20px;
+			color: #fff;
+		}
 
-    /* CSS để tạo hiệu ứng khi di chuột vào nút */
-    .btn-close:hover {
-        color: #ccc;
-    }
-	</style>	
+		/* CSS để tạo hiệu ứng khi di chuột vào nút */
+		.btn-close:hover {
+			color: #ccc;
+		}
+	</style>
 
 </head>
 
@@ -144,7 +204,7 @@ function addCustomers($conn)
 					<div class="collapse navbar-collapse justify-content-between">
 						<div class="header-left">
 							<div class="dashboard_bar">
-								Add Category
+								Add Product
 							</div>
 						</div>
 
@@ -488,31 +548,70 @@ function addCustomers($conn)
         ***********************************-->
 		<div class="content-body">
 			<div class="container-fluid">
-
-				<!-- row -->
 				<div class="row">
 					<div class="col-xl-12">
-						<div class="card  card-bx m-b30">
+						<div class="card card-bx m-b30">
 							<div class="card-header bg-primary">
-                                <h6 class="title text-white">Create Category</h6>
-                                <a href="category-list.php" class="btn-close" aria-label="Close"></a> <!-- Thêm nút "X" để đóng pop-up -->
-                            </div>
-							<form class="profile-form" action="add-category.php" method="post" onsubmit="return validateForm();">
+								<h6 class="title text-white">Create Product</h6>
+								<a href="product-list.php" class="btn-close" aria-label="Close"></a>
+							</div>
+							<form class="profile-form" action="add-product.php" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
 								<div class="card-body">
 									<div class="row">
 										<div class="col-sm-12 mb-3">
-											<label class=" form-label required">Name</label>
-											<input type="text" name="name" class="form-control" placeholder="Enter name category..." required="">
+											<label class="form-label required">Name product</label>
+											<input type="text" name="name" class="form-control" placeholder="Enter name product...">
 										</div>
-										<div class="col-sm-6 mb-3">
-											<label class=" form-label required">Description</label>
-											<input type="text" name="description" class="form-control" placeholder="Enter description..." required>
+										<div class="col-sm-12 mb-3">
+											<label class="form-label required">Category</label>
+											<select class="form-select" id="category" name="category" style="height: auto; padding: 0.375rem 2.25rem 0.375rem 0.75rem;">
+												<?php
+												$categories = getCategory($conn);
+												foreach ($categories as $category) {
+													echo '<option value="' . $category['category_id'] . '">' . $category['name'] . '</option>';
+												}
+												?>
+											</select>
 										</div>
-
+										<div class="col-sm-12 mb-3">
+											<label class="form-label required">Price</label>
+											<input type="number" name="price" class="form-control" placeholder="Enter price..." step="any">
+										</div>
+										<div class="col-sm-12 mb-3">
+											<label class="form-label required">Description</label>
+											<input type="text" name="description" class="form-control" placeholder="Enter description...">
+										</div>
+										<div class="col-sm-12 mb-3">
+											<label class="form-label required">Color</label>
+											<input type="text" name="color" class="form-control" placeholder="Enter color...">
+										</div>
+										<div class="col-sm-12 mb-3">
+											<label class="form-label required">Material</label>
+											<input type="text" name="material" class="form-control" placeholder="Enter material...">
+										</div>
+										<div class="col-sm-12 mb-3">
+											<label class="form-label required">Size</label>
+											<select class="form-select" id="size" name="size[]" multiple style="height: auto; padding: 0.375rem 2.25rem 0.375rem 0.75rem;">
+												<option>XS</option>
+												<option>S</option>
+												<option>M</option>
+												<option>L</option>
+												<option>XL</option>
+												<option>XXL</option>
+											</select>
+										</div>
+										<div class="col-sm-12 mb-3">
+											<label class="form-label required">Quantity</label>
+											<input type="number" name="quantity" class="form-control" placeholder="Enter quantity..." min="0">
+										</div>
+										<div class="col-sm-12 mb-3">
+											<label class="form-label">Image</label>
+											<input type="file" name="image" class="form-control" accept="image/*">
+										</div>
 									</div>
-								</div>
-								<div class="card-footer justify-content-end">
-									<button class="btn btn-primary">Create Category</button>
+									<div class="card-footer justify-content-end">
+										<button class="btn btn-primary">Create Product</button>
+									</div>
 								</div>
 							</form>
 						</div>
@@ -574,42 +673,19 @@ function addCustomers($conn)
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 	<script>
 		function validateForm() {
-			var userName = document.getElementsByName("userName")[0].value;
-			var password = document.getElementsByName("customer_password")[0].value;
-			var firstName = document.getElementsByName("firstName")[0].value;
-			var lastName = document.getElementsByName("lastName")[0].value;
-			var middleName = document.getElementsByName("middleName")[0].value;
-			var email = document.getElementsByName("email")[0].value;
-			var phoneNumber = document.getElementsByName("phoneNumber")[0].value;
-			var address = document.getElementsByName("address")[0].value;
+			var nameProduct = document.getElementsByName("name")[0].value;
+			var category = document.getElementsByName("category")[0].value;
+			var price = document.getElementsByName("price")[0].value;
+			var description = document.getElementsByName("description")[0].value;
+			var color = document.getElementsByName("color")[0].value;
+			var material = document.getElementsByName("material")[0].value;
+			var size = document.getElementsByName("size[]")[0].value;
+			var quantity = document.getElementsByName("quantity")[0].value;
+			var image = document.getElementsByName("image")[0].value;
 
 			// Kiểm tra trường rỗng
-			if (userName == "" || password == "" || firstName == "" || lastName == "" || middleName == "" || email == "" || phoneNumber == "" || address == "") {
+			if (nameProduct == "" || category == "" || price == "" || description == "" || color == "" || material == "" || size == "" || quantity == "" || image == "") {
 				swal("Error!", "Please complete all information.", "error");
-				return false;
-			}
-
-			// Kiểm tra first_name, last_name, middle_name chỉ chứa ký tự
-			var nameRegex = /^[a-zA-Z]+$/;
-			if (!nameRegex.test(firstName) || !nameRegex.test(lastName) || !nameRegex.test(middleName)) {
-				swal("Error!", "The 'first_name','middle_name','last_name' field only allows names, numbers are not allowed.", "error");
-				return false;
-			}
-
-			// Kiểm tra mật khẩu có ít nhất 8 ký tự và chứa ít nhất một ký tự chữ
-			if (password.length < 8 || !/[a-zA-Z]/.test(password)) {
-				swal("Error!", "Password must have at least 8 characters and at least one letter character.", "error");
-				return false;
-			}
-
-			// Kiểm tra số điện thoại theo kiểu Việt Nam
-			var phoneRegex = /^(0[1-9])+([0-9]{8})\b$/;
-			if (!phoneRegex.test(phoneNumber)) {
-				swal("Error!", "Invalid phone number.", "error");
-				return false;
-			}
-			if (!validateEmail(email)) {
-				swal("Error!", "Invalid email.", "error");
 				return false;
 			}
 

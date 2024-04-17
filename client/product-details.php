@@ -294,76 +294,17 @@ function getCategoryByID($conn)
                         <div id="menu" class="text-left ">
                             <ul class="offcanvas_main_menu">
                                 <li class="menu-item-has-children active">
-                                    <a href="#">Home</a>
+                                    <a href="index.php">Home</a>
 
                                 </li>
                                 <li class="menu-item-has-children">
-                                    <a href="#">Shop</a>
-                                    <ul class="sub-menu">
-                                        <li class="menu-item-has-children">
-                                            <a href="#">Shop Layouts</a>
-                                            <ul class="sub-menu">
-                                                <li><a href="shop.html">shop</a></li>
-                                                <li><a href="shop-fullwidth.php?category_id=1">Shirts</a></li>
-                                                <li><a href="shop-fullwidth.php?category_id=2">Skirts</a></li>
-                                                <li><a href="shop-fullwidth.php?category_id=3">Frocks </a></li>
-                                                <li><a href="shop-fullwidth.php?category_id=4"> P.T. T-shirts</a></li>
-                                                <li><a href="shop-fullwidth.php?category_id=5">P.T. shorts</a></li>
-                                                <li><a href="shop-fullwidth.php?category_id=6">P.T. track pants</a></li>
-                                                <li><a href="shop-fullwidth.php?category_id=7">Belts</a></li>
-                                                <li><a href="shop-fullwidth.php?category_id=8">Ties</a></li>
-                                                <li><a href="shop-fullwidth.php?category_id=9">Logos</a></li>
-                                                <li><a href="shop-fullwidth.php?category_id=10">Socks</a></li>
-                                            </ul>
-                                        </li>
-                                        <li class="menu-item-has-children">
-                                            <a href="#">other Pages</a>
-                                            <ul class="sub-menu">
-                                                <li><a href="portfolio.html">portfolio</a></li>
-                                                <li><a href="portfolio-details.html">portfolio details</a></li>
-                                                <li><a href="cart.html">cart</a></li>
-                                                <li><a href="checkout.html">Checkout</a></li>
-                                                <li><a href="my-account.html">my account</a></li>
-                                            </ul>
-                                        </li>
-                                        <li class="menu-item-has-children">
-                                            <a href="#">Product Types</a>
-                                            <ul class="sub-menu">
-                                                <li><a href="product-details.html">product details</a></li>
-                                                <li><a href="product-sidebar.html">product sidebar</a></li>
-                                                <li><a href="product-grouped.html">product grouped</a></li>
-                                                <li><a href="variable-product.html">product variable</a></li>
-                                            </ul>
-                                        </li>
+                                <li><a>Shop<i class="fa fa-angle-down"></i></a>
+                                    <ul class="sub_menu pages">
+                                        <?php foreach ($categories as $category) : ?>
+                                            <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
+                                        <?php endforeach; ?>
                                     </ul>
                                 </li>
-                                <li class="menu-item-has-children">
-                                    <a href="#">blog</a>
-                                    <ul class="sub-menu">
-                                        <li><a href="blog.html">blog</a></li>
-                                        <li><a href="blog-details.html">blog details</a></li>
-                                        <li><a href="blog-sidebar.html">blog Sidebar</a></li>
-                                        <li><a href="blog-fullwidth.html">blog fullwidth</a></li>
-                                    </ul>
-
-                                </li>
-                                <li class="menu-item-has-children">
-                                    <a href="#">pages </a>
-                                    <ul class="sub-menu">
-                                        <li><a href="about.php">About Us</a></li>
-                                        <li><a href="services.html">services</a></li>
-                                        <li><a href="faq.html">Frequently Questions</a></li>
-                                        <li><a href="contact.html">contact</a></li>
-                                        <li><a href="login.html">login</a></li>
-                                        <li><a href="wishlist.html">Wishlist</a></li>
-                                        <li><a href="404.html">Error 404</a></li>
-                                        <li><a href="compare.html">compare</a></li>
-                                        <li><a href="privacy-policy.html">privacy policy</a></li>
-                                        <li><a href="coming-soon.html">coming soon</a></li>
-                                    </ul>
-                                </li>
-                                <li class="menu-item-has-children">
-                                    <a href="my-account.html">my account</a>
                                 </li>
                                 <li class="menu-item-has-children">
                                     <a href="about.php">About Us</a>
@@ -499,7 +440,24 @@ function getCategoryByID($conn)
 
                             <div id="img-1" class="zoomWrapper single-zoom">
                                 <a>
-                                    <img id="zoom1" src="<?php echo $product['avata_product']; ?>" data-zoom-image="<?php echo $product['avata_product']; ?>" alt="big-1">
+                                    <?php
+                                    // Kiểm tra nếu đường dẫn ảnh không phải là URL (không có "http://" hoặc "https://")
+                                    if (!filter_var($product['avatar_product'], FILTER_VALIDATE_URL)) {
+                                        // Tạo đường dẫn tuyệt đối tới thư mục "uploads"
+                                        $uploadImagePath = '../admin/xhtml/xhtml/uploads/' . $product['avatar_product'];
+                                        // Kiểm tra nếu tập tin tồn tại trong thư mục "uploads"
+                                        if (file_exists($uploadImagePath)) {
+                                            // Sử dụng đường dẫn tuyệt đối tới thư mục "uploads"
+                                            echo '<img id="zoom1" src="' . $uploadImagePath . '" data-zoom-image="' . $uploadImagePath . '" alt="big-1">';
+                                        } else {
+                                            // Nếu không tìm thấy tập tin trong thư mục "uploads", sử dụng đường dẫn mặc định
+                                            echo '<img id="zoom1" src="' . $product['avatar_product'] . '" data-zoom-image="' . $product['avatar_product'] . '" alt="big-1">';
+                                        }
+                                    } else {
+                                        // Nếu đường dẫn là URL, sử dụng đường dẫn đó như bình thường
+                                        echo '<img id="zoom1" src="' . $product['avatar_product'] . '" data-zoom-image="' . $product['avatar_product'] . '" alt="big-1">';
+                                    }
+                                    ?>
                                 </a>
                             </div>
 
@@ -554,7 +512,7 @@ function getCategoryByID($conn)
                                             <?php foreach ($products as $product) : ?>
                                                 <?php
                                                 // Phân tách chuỗi màu sắc thành các phần tử riêng biệt
-                                                     $colors = explode(', ', $product['arr_color']);
+                                                $colors = explode(', ', $product['arr_color']);
                                                 ?>
                                                 <?php foreach ($colors as $color) : ?>
                                                     <option value="<?php echo $color; ?>"><?php echo $color; ?></option>
@@ -569,7 +527,7 @@ function getCategoryByID($conn)
                                             <option selected disabled>Choose size</option>
                                             <?php foreach ($products as $product) : ?>
                                                 <?php
-                                                    $sizes = explode(', ', $product['size']);
+                                                $sizes = explode(', ', $product['size']);
                                                 ?>
                                                 <?php foreach ($sizes as $size) : ?>
                                                     <option value="<?php echo $size; ?>"><?php echo $size; ?></option>
@@ -579,7 +537,7 @@ function getCategoryByID($conn)
                                     </div>
                                     <div class="product_variant quantity">
                                         <label>quantity</label>
-                                        <input min="1" max="100" value="1" type="number">
+                                        <input min="1" max="100" value="<?php echo $product['quantity'] ?>" readonly>
 
                                     </div>
 
@@ -611,40 +569,6 @@ function getCategoryByID($conn)
                         </div>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="info" role="tabpanel">
-                                <div class="product_info_content">
-                                    <p>Fashion has been creating well-designed collections since 2010. The brand offers feminine designs delivering stylish separates and statement dresses which have since evolved into a full ready-to-wear collection in which every item is a vital part of a woman's wardrobe. The result? Cool, easy, chic looks with youthful elegance and unmistakable signature style. All the beautiful pieces are made in Italy and manufactured with the greatest attention. Now Fashion extends to a range of accessories including shoes, hats, belts and more!</p>
-                                </div>
-                            </div>
-
-                            <div class="tab-pane fade" id="sheet" role="tabpanel">
-                                <div class="product_d_table">
-                                    <form action="#">
-                                        <table>
-                                            <tbody>
-                                                <tr>
-                                                    <td class="first_child">Compositions</td>
-                                                    <td>Polyester</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="first_child">Styles</td>
-                                                    <td>Girly</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="first_child">Properties</td>
-                                                    <td>Short Dress</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </form>
-                                </div>
-                                <div class="product_info_content">
-                                    <p>Fashion has been creating well-designed collections since 2010. The brand offers feminine designs delivering stylish separates and statement dresses which have since evolved into a full ready-to-wear collection in which every item is a vital part of a woman's wardrobe. The result? Cool, easy, chic looks with youthful elegance and unmistakable signature style. All the beautiful pieces are made in Italy and manufactured with the greatest attention. Now Fashion extends to a range of accessories including shoes, hats, belts and more!</p>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="reviews" role="tabpanel">
-                                <div class="product_info_content">
-                                    <p>Fashion has been creating well-designed collections since 2010. The brand offers feminine designs delivering stylish separates and statement dresses which have since evolved into a full ready-to-wear collection in which every item is a vital part of a woman's wardrobe. The result? Cool, easy, chic looks with youthful elegance and unmistakable signature style. All the beautiful pieces are made in Italy and manufactured with the greatest attention. Now Fashion extends to a range of accessories including shoes, hats, belts and more!</p>
-                                </div>
                                 <?php foreach ($feedbacks as $feedback) : ?>
                                     <div class="product_info_inner">
                                         <div class="product_ratting mb-10">
@@ -674,11 +598,15 @@ function getCategoryByID($conn)
 
                                     </div>
                                 <?php endforeach; ?>
+                            </div>
+
+
+                            <div class="tab-pane fade  active" id="reviews" role="tabpanel">
+
 
                                 <div class="product_review_form">
                                     <form action="product-details.php?category_id=<?php echo $category_id ?>&product_id=<?php echo $product_id ?>" method="post" onsubmit="return validateForm()">
                                         <h2>Add a review </h2>
-                                        <p>Your email address will not be published. Required fields are marked </p>
                                         <div class="row">
                                             <div class="col-12">
                                                 <label for="review_comment">Your review </label>

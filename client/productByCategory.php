@@ -21,7 +21,7 @@ $totalPages = $productsData['totalPages'];
 
 //gán giá trị trả về của hàm getCategoryName() vào biến $categoryName
 $categoryName = getCategoryName($conn, $category_id);
-$categories=getCategoryByID($conn);
+$categories = getCategoryByID($conn);
 
 
 // Đóng kết nối
@@ -174,7 +174,7 @@ function getCategoryByID($conn)
                                 </ul>
                             </div>
                         </div>
-                        
+
                         <div class="contact_phone">
                             <p>Call Free Support: <a href="tel:01234567890">01234567890</a></p>
                         </div>
@@ -253,7 +253,7 @@ function getCategoryByID($conn)
                             </div>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -273,8 +273,8 @@ function getCategoryByID($conn)
                                             </li>
                                             <li><a>Shop<i class="fa fa-angle-down"></i></a>
                                                 <ul class="sub_menu pages">
-                                                    <?php foreach($categories as $category) :?>
-                                                    <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
+                                                    <?php foreach ($categories as $category) : ?>
+                                                        <li><a href="productByCategory.php?category_id=<?php echo $category['category_id'] ?>"><?php echo $category['name'] ?></a></li>
                                                     <?php endforeach; ?>
                                                 </ul>
                                             </li>
@@ -344,7 +344,24 @@ function getCategoryByID($conn)
                                         <div class="single_product">
                                             <div class="product_thumb">
                                                 <a class="primary_img" href="product-details.php?product_id=<?php echo $product['product_id']; ?>&category_id=<?php echo $category_id; ?>">
-                                                    <img src="<?php echo $product['avata_product']; ?>" alt="Product Image">
+                                                    <?php
+                                                    // Kiểm tra nếu đường dẫn ảnh không phải là URL (không có "http://" hoặc "https://")
+                                                    if (!filter_var($product['avatar_product'], FILTER_VALIDATE_URL)) {
+                                                        // Tạo đường dẫn tuyệt đối tới thư mục "uploads"
+                                                        $uploadImagePath = '../admin/xhtml/xhtml/uploads/' . $product['avatar_product'];
+                                                        // Kiểm tra nếu tập tin tồn tại trong thư mục "uploads"
+                                                        if (file_exists($uploadImagePath)) {
+                                                            // Sử dụng đường dẫn tuyệt đối tới thư mục "uploads"
+                                                            echo '<img src="' . $uploadImagePath . '" alt="Product Image">';
+                                                        } else {
+                                                            // Nếu không tìm thấy tập tin trong thư mục "uploads", sử dụng đường dẫn mặc định
+                                                            echo '<img src="' . $product['avatar_product'] . '" alt="Product Image">';
+                                                        }
+                                                    } else {
+                                                        // Nếu đường dẫn là URL, sử dụng đường dẫn đó như bình thường
+                                                        echo '<img src="' . $product['avatar_product'] . '" alt="Product Image">';
+                                                    }
+                                                    ?>
                                                 </a>
                                                 <!-- <a class="secondary_img" href="product-details.html"><img src="assets/img/product/product16.jpg" alt=""></a> -->
 
@@ -508,7 +525,7 @@ function getCategoryByID($conn)
         </div>
         <div class="footer_bottom">
             <div class="container">
-               <div class="row">
+                <div class="row">
                     <div class="col-md-12">
                         <div class="copyright_area">
                             <p> &copy; 2024 <strong> A-1 Uniforms</strong></p>
