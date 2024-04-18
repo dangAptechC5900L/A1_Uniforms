@@ -81,7 +81,7 @@ JOIN customer c ON f.customer_id = c.customer_id";
 // 	return $feedbacks;
 // }
 
-function getCustomerByUserName($conn)
+function getFeedbackByProductName($conn)
 {
 	if (isset($_GET['term'])) {
 		$searchTerm = '%' . $_GET['term'] . '%';
@@ -108,7 +108,7 @@ function getCustomerByUserName($conn)
 }
 
 
-$feedbackSearch = getCustomerByUserName($conn);
+$feedbackSearch = getFeedbackByProductName($conn);
 $feedbacks = getAllFeedback($conn);
 
 $rows = getTotalFeedback($conn);
@@ -123,21 +123,6 @@ $rows = getTotalFeedback($conn);
 	<!-- Meta -->
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="author" content="DexignZone">
-	<meta name="robots" content="index, follow">
-
-	<meta name="keywords" content="	admin dashboard, admin template, administration, analytics, bootstrap, bootstrap admin, coupon, deal, modern, responsive admin dashboard, ticket, ticket dashboard, ticket system, admin panel,	Ticketing admin, Dashboard template, Bootstrap HTML, Ticket management, Event ticketing, Responsive design, User-friendly interface, Efficiency, Streamlining operations, Event management, Ticket sales, Customizable template, Stylish design, Modern dashboard">
-	<meta name="description" content="Discover Tixia, the ultimate solution for ticketing administration. Our Bootstrap HTML Template empowers you to streamline ticketing tasks, enhancing operational efficiency with style and ease. Simplify your processes and elevate your ticketing management experience today.">
-
-	<meta property="og:title" content="Tixia - Ticketing Admin Dashboard Bootstrap HTML Template | DexignZone">
-	<meta property="og:description" content="Discover Tixia, the ultimate solution for ticketing administration. Our Bootstrap HTML Template empowers you to streamline ticketing tasks, enhancing operational efficiency with style and ease. Simplify your processes and elevate your ticketing management experience today.">
-	<meta property="og:image" content="page-error-404.html">
-	<meta name="format-detection" content="telephone=no">
-
-	<meta name="twitter:title" content="Tixia - Ticketing Admin Dashboard Bootstrap HTML Template | DexignZone">
-	<meta name="twitter:description" content="Discover Tixia, the ultimate solution for ticketing administration. Our Bootstrap HTML Template empowers you to streamline ticketing tasks, enhancing operational efficiency with style and ease. Simplify your processes and elevate your ticketing management experience today.">
-	<meta name="twitter:image" content="page-error-404.html">
-	<meta name="twitter:card" content="summary_large_image">
 
 	<!-- MOBILE SPECIFIC -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -147,7 +132,7 @@ $rows = getTotalFeedback($conn);
 	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
 	<link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
 	<link href="vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
-	<link href="vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+	<!-- <link href="vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet"> -->
 	<link class="main-css" href="css/style.css" rel="stylesheet">
 
 </head>
@@ -679,7 +664,7 @@ $rows = getTotalFeedback($conn);
 													<td>
 
 														<div class="d-flex">
-															<a href="showFeedback.php?feedback_id=<?php echo $feedbackSearch['feedback_id']; ?>" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>
+															<a href="showFeedback.php?feedback_id=<?php echo $feedbackSearch['feedback_id']; ?>" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fa-solid fa-eye"></i></a>
 
 														</div>
 													</td>
@@ -727,7 +712,7 @@ $rows = getTotalFeedback($conn);
 													<td>
 
 														<div class="d-flex">
-														<a href="showFeedback.php?feedback_id=<?php echo $feedback['feedback_id']; ?>" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>
+														<a href="showFeedback.php?feedback_id=<?php echo $feedback['feedback_id']; ?>" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fa-solid fa-eye"></i></a>
 														</div>
 													</td>
 												</tr>

@@ -84,7 +84,7 @@ function addProducts($conn)
 		$sql = "INSERT INTO product (category_id, product_name, price, avatar_product, arr_color, material, description, isDeleted, create_date, size, quantity)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		$stmt = $conn->prepare($sql);
-		$stmt->bind_param("issssssssss", $category, $product_name, $price, $image, $color, $material, $description, $isDeleted, $createDate, $size, $quantity);
+		$stmt->bind_param("isdssssssss", $category, $product_name, $price, $image, $color, $material, $description, $isDeleted, $createDate, $size, $quantity);
 
 		if ($stmt->execute()) {
 			echo "Add Product Success";
