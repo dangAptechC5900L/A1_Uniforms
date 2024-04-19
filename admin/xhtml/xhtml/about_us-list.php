@@ -1,9 +1,7 @@
 <?php
 session_start();
 include '../../../function.php';
-
 $conn = initConnection();
-
 
 // Kiểm tra xem người dùng đã đăng nhập chưa
 if (!isset($_SESSION['login']) || $_SESSION['login'] !== TRUE) {
@@ -38,10 +36,6 @@ function getTotalAboutUs($conn)
 	return $result->fetch_all(MYSQLI_ASSOC);
 }
 
-// function searchCustomerByUserName($conn){
-// 	$sql="SELECT * FROM customer where"
-// }
-
 function getAllAboutUs($conn)
 {
 	$sql = "SELECT * FROM about_us";
@@ -75,7 +69,7 @@ function getAboutUsByTitle($conn)
 		return $aboutUs_Search;
 	} else {
 		// Trả về một giá trị mặc định hoặc xử lý khác khi không có 'term' được truyền vào.
-		return array(); // hoặc return null; tùy vào yêu cầu của bạn
+		return array(); // hoặc return null; 
 	}
 }
 
@@ -98,8 +92,6 @@ $rows = getTotalAboutUs($conn);
 	<!-- MOBILE SPECIFIC -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- Favicon icon -->
-
-
 	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
 	<link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
 	<link href="vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
@@ -166,12 +158,6 @@ $rows = getTotalAboutUs($conn);
 						</div>
 
 						<ul class="navbar-nav header-right">
-							<!-- <li class="nav-item dropdown notification_dropdown">
-								<div class="input-group search-area">
-									<input type="text" class="form-control" placeholder="Search here...">
-									<span class="input-group-text"><a href="javascript:void(0)"><i class="flaticon-381-search-2"></i></a></span>
-								</div>
-							</li> -->
 							<li class="nav-item dropdown notification_dropdown">
 								<a class="nav-link bell  primary dz-theme-mode" href="javascript:void(0);">
 									<i id="icon-light" class="fas fa-sun"></i>
@@ -543,7 +529,7 @@ $rows = getTotalAboutUs($conn);
 												</span>
 												<div class="media-body ms-1">
 													<p class="mb-0 fs-14">Total Posts</p>
-													<h3 class="mb-0 text-black font-w600 fs-16"><?php echo $row['COUNT(*)'] ?> Posts</h3>
+													<h3 class="mb-0 text-black font-w600 fs-16"><?php echo $row['COUNT(*)'] ?> </h3>
 												</div>
 
 											</div>
@@ -619,22 +605,20 @@ $rows = getTotalAboutUs($conn);
 													</div>
 												</td> -->
 												<td>
-													<!-- <div class="btn-group">
-														<form action="customer-list.php" method="post">
-															<button type="submit" name="customer_id" value="<?php echo $aboutUs_Search['id_about']; ?>" class="btn <?php echo $aboutUs_Search['isDeleted'] == 0 ? 'btn-success' : 'btn-secondary'; ?> rounded">
+													<div class="btn-group">
+														<form action="about_us-list.php" method="post">
+															<button type="submit" name="id_about" value="<?php echo $aboutUs_Search['id_about']; ?>" class="btn <?php echo $aboutUs_Search['isDeleted'] == 0 ? 'btn-success' : 'btn-secondary'; ?> rounded">
 																<?php echo $aboutUs_Search['isDeleted'] == 0 ? "Active" : "Inactive"; ?>
 															</button>
 														</form>
-													</div> -->
+													</div>
 
 												</td>
-												<!-- <td>
-
-												<div class="d-flex">
-													<a href="edit-about_us.php?about_id=<?php echo $about_us['id_about']; ?>" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>
-														
+												<td>
+													<div class="d-flex">
+													<a href="edit-about_us.php?about_id=<?php echo $aboutUs_Search['id_about']; ?>" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>														
 													</div>
-												</td> -->
+												</td>
 												</tr>
 											<?php
 											}
@@ -678,10 +662,8 @@ $rows = getTotalAboutUs($conn);
 
 												</td>
 												<td>
-
 													<div class="d-flex">
-													<a href="edit-about_us.php?about_id=<?php echo $about_us['id_about']; ?>" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>
-														
+													<a href="edit-about_us.php?about_id=<?php echo $about_us['id_about']; ?>" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>														
 													</div>
 												</td>
 												</tr>

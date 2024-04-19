@@ -1,18 +1,20 @@
 <?php
+session_start();
+// Kiểm tra xem người dùng đã đăng nhập chưa
+if (!isset($_SESSION['login']) || $_SESSION['login'] !== TRUE) {
+    // Nếu không, chuyển hướng người dùng đến trang đăng nhập
+    header("Location: admin-login.php");
+    exit;
+}
 
 include '../../../function.php';
-
-
 
 $conn = initConnection();
 
 // $customer_id = $_GET['customer_id'];
 $customer_id = $_GET['customer_id'] ?? null;
 
-
 editCustomer($conn, $customer_id);
-
-
 $customers = getCustomerById($conn, $customer_id);
 
 function getCustomerById($conn, $customer_id)

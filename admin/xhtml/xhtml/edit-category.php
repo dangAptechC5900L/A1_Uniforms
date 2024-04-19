@@ -39,13 +39,13 @@ function editCategory($conn, $category_id)
 			return;
 		}
 
-		$product_id=0;
+		$parent_id=0;
 		$isDeleted = false;
 
-        $sql = "UPDATE category SET name=?,description=?,isDeleted=?,product_id=? WHERE category_id=?";
+        $sql = "UPDATE category SET name=?,description=?,isDeleted=?,parent_id=? WHERE category_id=?";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssiii",  $category_name, $description, $isDeleted, $product_id, $category_id);
+        $stmt->bind_param("ssiii", $category_name, $description, $isDeleted, $parent_id, $category_id);
         //   $stmt->bind_param("sssssssii", $hashedPassword, $firstName,  $lastName,$customer_id);
         $stmt->execute();
 

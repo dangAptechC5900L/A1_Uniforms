@@ -35,7 +35,9 @@ function getTotalProduct($conn)
 
 function getAllProduct($conn)
 {
-	$sql = "SELECT * FROM product";
+	$sql = "SELECT p.*, c.name AS category_name 
+            FROM product p 
+            INNER JOIN category c ON p.category_id = c.category_id";
 	$stmt = $conn->prepare($sql);
 	$stmt->execute();
 	$result = $stmt->get_result();
@@ -53,21 +55,24 @@ function getAllProduct($conn)
 
 function getProductByName($conn)
 {
-	if (isset($_GET['term'])) {
-		$searchTerm = '%' . $_GET['term'] . '%';
+    if (isset($_GET['term'])) {
+        $searchTerm = '%' . $_GET['term'] . '%';
 
-		$sql = "SELECT * FROM product WHERE product_name LIKE ?";
-		$stmt = $conn->prepare($sql);
-		$stmt->bind_param('s', $searchTerm);
-		$stmt->execute();
-		$result = $stmt->get_result();
-		$productSearch = $result->fetch_all(MYSQLI_ASSOC);
+        $sql = "SELECT p.*, c.name AS category_name 
+                FROM product p 
+                INNER JOIN category c ON p.category_id = c.category_id
+                WHERE p.product_name LIKE ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('s', $searchTerm);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $productSearch = $result->fetch_all(MYSQLI_ASSOC);
 
-		return $productSearch;
-	} else {
-		// Trả về một giá trị mặc định hoặc xử lý khác khi không có 'term' được truyền vào.
-		return array(); // hoặc return null; tùy vào yêu cầu của bạn
-	}
+        return $productSearch;
+    } else {
+        // Trả về một giá trị mặc định hoặc xử lý khác khi không có 'term' được truyền vào.
+        return array(); // hoặc return null; tùy vào yêu cầu của bạn
+    }
 }
 
 
@@ -560,7 +565,8 @@ $rows = getTotalProduct($conn);
 												</div>
 											</th>
 											<!-- <th>ID</th> -->
-											<th>Name</th>
+											<th>Product_Name</th>
+											<th>Category_name</th>
 											<th>Price</th>
 											<th>Image</th>
 											<th>Color</th>
@@ -588,16 +594,16 @@ $rows = getTotalProduct($conn);
 															<label class="form-check-label" for="customCheckBox2"></label>
 														</div>
 													</td>
-													<!-- <td><?= $customer['customer_id'] ?></td> -->
+												
 													<td>
 														<p><?php echo $productSearch['product_name'] ?></p>
 													</td>
 													<td>
+														<p><?php echo $productSearch['category_name'] ?></p>
+													</td>
+													<td>
 														<p><?php echo $productSearch['price'] ?></p>
 													</td>
-													<!-- <td>
-														<img src="<?php echo $productSearch['avatar_product']; ?>" alt="Avatar" width="100">
-													</td> -->
 
 													<td>
 														<?php
@@ -645,7 +651,6 @@ $rows = getTotalProduct($conn);
 
 														<div class="d-flex">
 															<a href="edit-customer.php?customer_id=<?php echo $customer['customer_id']; ?>" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>
-
 														</div>
 													</td>
 												</tr>
@@ -665,6 +670,9 @@ $rows = getTotalProduct($conn);
 													<!-- <td><?= $customer['customer_id'] ?></td> -->
 													<td>
 														<p><?php echo $product['product_name'] ?></p>
+													</td>
+													<td>
+														<p><?php echo $product['category_name'] ?></p>
 													</td>
 													<td>
 														<p><?php echo $product['price'] ?></p>
@@ -725,12 +733,10 @@ $rows = getTotalProduct($conn);
 
 													</td>
 													<td>
-
 														<div class="d-flex">
-															<a href="edit-product.php?product_id=<?php echo $product['product_id']; ?>&selected_file=<?php echo $product['avatar_product']; ?>" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>
-
-
+															<a href="edit-product.php?product_id=<?php echo $product['product_id']; ?>&selected_file=<?php echo $product['avatar_product']; ?>&category_id=<?php echo $product['category_id']; ?>" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>
 														</div>
+
 													</td>
 												</tr>
 										<?php

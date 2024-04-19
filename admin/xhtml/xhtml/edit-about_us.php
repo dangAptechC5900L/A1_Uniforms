@@ -1,8 +1,12 @@
 <?php
-
+session_start();
+// Kiểm tra xem người dùng đã đăng nhập chưa
+if (!isset($_SESSION['login']) || $_SESSION['login'] !== TRUE) {
+    // Nếu không, chuyển hướng người dùng đến trang đăng nhập
+    header("Location: admin-login.php");
+    exit;
+}
 include '../../../function.php';
-
-
 
 $conn = initConnection();
 
@@ -11,8 +15,6 @@ $about_id = $_GET['about_id'] ?? null;
 
 
 editAboutUs($conn, $about_id);
-
-
 $about_us = getAboutUsById($conn, $about_id);
 
 function getAboutUsById($conn, $about_id)

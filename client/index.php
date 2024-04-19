@@ -195,8 +195,6 @@ $categories = getCategoryByID($conn);
                 <div class="row align-items-center">
                     <div class="col-12">
                         <div class="slider_content content_three">
-                            
-                          
                         </div>
                     </div>
                 </div>

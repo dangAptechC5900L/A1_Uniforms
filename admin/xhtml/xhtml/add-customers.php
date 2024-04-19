@@ -1,4 +1,11 @@
 <?php
+session_start();
+// Kiểm tra xem người dùng đã đăng nhập chưa
+if (!isset($_SESSION['login']) || $_SESSION['login'] !== TRUE) {
+    // Nếu không, chuyển hướng người dùng đến trang đăng nhập
+    header("Location: admin-login.php");
+    exit;
+}
 
 include '../../../function.php';
 

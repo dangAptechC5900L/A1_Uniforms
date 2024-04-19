@@ -570,7 +570,7 @@ $rows = getTotalAboutUs($conn);
 											<!-- <th>ID</th> -->
 											<th>Subject</th>
 											<th>Email</th>
-											<th>Description</th>
+											<th>Message</th>
 											<th>Contact_Date</th>
 											<th>Status</th>
 											<th>Functions</th>
@@ -597,7 +597,7 @@ $rows = getTotalAboutUs($conn);
 													<p><?php echo $contact_Us_Search['email'] ?></p>
 												</td>
 												<td>
-													<p><?php echo $contact_Us_Search['subject'] ?></p>
+													<p><?php echo $contact_Us_Search['message'] ?></p>
 												</td>
 												<td>
 													<p><?php echo $contact_Us_Search['contact_date'] ?></p>
@@ -640,7 +640,7 @@ $rows = getTotalAboutUs($conn);
 													<p><?php echo $contact_Us['email'] ?></p>
 												</td>
 												<td>
-													<p><?php echo $contact_Us['subject'] ?></p>
+													<p><?php echo $contact_Us['message'] ?></p>
 												</td>
 												<td>
 													<p><?php echo $contact_Us['contact_date'] ?></p>

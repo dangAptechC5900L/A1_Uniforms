@@ -1,5 +1,13 @@
 <?php
 
+session_start();
+// Kiểm tra xem người dùng đã đăng nhập chưa
+if (!isset($_SESSION['login']) || $_SESSION['login'] !== TRUE) {
+    // Nếu không, chuyển hướng người dùng đến trang đăng nhập
+    header("Location: admin-login.php");
+    exit;
+}
+
 include '../../../function.php';
 
 $conn = initConnection();
@@ -17,11 +25,13 @@ function addAboutUs($conn)
 			return;
 		}
 
+		$isDeleted=0;
+
 	
-		$sql = "INSERT INTO about_us (title,  description)
-        VALUES (?, ?)";
+		$sql = "INSERT INTO about_us (title,  description,isDeleted)
+        VALUES (?, ?, ?)";
 		$stmt = $conn->prepare($sql);
-		$stmt->bind_param("ss", $about_title, $description);
+		$stmt->bind_param("ssi", $about_title, $description,$isDeleted);
 
 
 		// Thực hiện truy vấn

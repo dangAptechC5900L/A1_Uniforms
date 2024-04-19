@@ -2,16 +2,71 @@
 
 include '../../../function.php';
 
-
-
 $conn = initConnection();
 
-
 $product_id = $_GET['product_id'] ?? null;
+$category_id = $_GET['category_id'] ?? null;
 
 
-editCustomer($conn, $customer_id);
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["image"])) {
+    if (isset($_FILES["image"])) {
+        // Đường dẫn thư mục lưu trữ ảnh
+        $targetDir = "uploads/";
+
+        // Tạo đường dẫn đầy đủ của file đã upload
+        $targetFilePath = $targetDir . basename($_FILES["image"]["name"]);
+
+        // Kiểm tra xem file đã tồn tại chưa
+        if (file_exists($targetFilePath)) {
+            echo "File đã tồn tại.";
+        } else {
+            // Kiểm tra xem file có phải là ảnh hợp lệ không
+            $imageFileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+            $allowedExtensions = array("jpg", "jpeg", "png", "gif");
+
+            if (in_array($imageFileType, $allowedExtensions)) {
+                // Thực hiện upload file
+                if (move_uploaded_file($_FILES["image"]["tmp_name"], $targetFilePath)) {
+                    // Lưu đường dẫn của ảnh vào cơ sở dữ liệu
+                    $imagePathInDB = $targetFilePath;
+
+                    // In thông báo nếu upload ảnh thành công
+                    echo "File được tải lên thành công.";
+                } else {
+                    echo "Đã xảy ra lỗi khi tải lên file.";
+                }
+            } else {
+                echo "Chỉ cho phép tải lên các file ảnh định dạng JPG, JPEG, PNG, GIF.";
+            }
+        }
+    }
+}
+
+function getCategory($conn)
+{
+    $sql = "SELECT * FROM category";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+
+    $categories = array();
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $categories[] = $row;
+        }
+    }
+    $stmt->close();
+
+    return $categories;
+}
+
+
+
+editProduct($conn, $product_id);
 $products = getProductById($conn, $product_id);
+$categories = getCategory($conn);
 
 function getProductById($conn, $product_id)
 {
@@ -26,54 +81,43 @@ function getProductById($conn, $product_id)
     return $products;
 }
 
-function editCustomer($conn, $customer_id)
+function editProduct($conn, $product_id)
 {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $userName = $_POST["userName"];
-        $password = $_POST["customer_password"];
-        $firstName = $_POST["firstName"];
-        $middleName = $_POST["middleName"];
-        $lastName = $_POST["lastName"];
-        $email = $_POST["email"];
-        $phoneNumber = $_POST["phoneNumber"];
-        $address = $_POST["address"];
+        $category = $_POST["category"];
+        $product_name = $_POST["name"];
+        $price = $_POST["price"];
+        $image = $_FILES["image"]["name"];
+        $color = $_POST["color"];
+        $material = $_POST["material"];
+        $description = $_POST["description"];
+        $createDate = date('Y-m-d H:i:s');
+        $size = implode(", ", $_POST["size"]);
+        $quantity = $_POST["quantity"];
 
-        if (empty($userName) || empty($password) || empty($firstName) || empty($middleName) || empty($lastName) || empty($email) || empty($phoneNumber) || empty($address)) {
-            echo "Vui lòng điền đầy đủ thông tin.";
+        if (empty($category) || empty($product_name) || empty($price) || empty($color) || empty($material) || empty($description) || empty($createDate) || empty($size) || empty($quantity)) {
+            echo "Please fill in all information.";
             return;
         }
 
-        // Kiểm tra các trường first_name, last_name, middle_name chỉ chứa ký tự
-        if (!preg_match('/^[a-zA-Z]+$/', $firstName) || !preg_match('/^[a-zA-Z]+$/', $middleName) || !preg_match('/^[a-zA-Z]+$/', $lastName)) {
-            echo "The 'first_name','middle_name','last_name' field only allows names, numbers are not allowed.";
-            return;
-        }
-
-        // Mã hóa mật khẩu sử dụng sha1
-        $hashedPassword = sha1($password);
         $isDeleted = false;
 
-        $sql = "UPDATE customer SET password=?,first_name=?,last_name=?,middle_name=?,email=?,phone_number=?,address=?,isDeleted=? WHERE customer_id=?";
-        // $sql = "UPDATE customer SET username=?,password=?,first_name=?,last_name=?,middle_name=?,email=?,phone_number=?,address=?,isDeleted=? WHERE customer_id=?";
-
-        //  VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "UPDATE product SET category_id=?,product_name=?,price=?,avatar_product=?,arr_color=?,material=?,description=?,isDeleted=?,create_date=?,size=?,quantity=? WHERE product_id=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssssssii",  $hashedPassword, $firstName, $lastName, $middleName, $email, $phoneNumber, $address, $isDeleted, $customer_id);
-        //   $stmt->bind_param("sssssssii", $hashedPassword, $firstName,  $lastName,$customer_id);
+        $stmt->bind_param("isdssssssssi", $category, $product_name, $price, $image, $color, $material, $description, $isDeleted, $createDate, $size, $quantity, $product_id);
         $stmt->execute();
 
 
         if ($stmt->execute()) {
-            echo "Thêm khách hàng thành công";
+            echo "Edit Product Success";
+            header('Location:product-list.php');
         } else {
-            echo "Lỗi khi sửa thông tin khách hàng: " . $stmt->error;
+            echo "Error! " . $stmt->error;
         }
         // Đóng kết nối tới cơ sở dữ liệu
         $stmt->close();
     }
 }
-
-
 
 ?>
 
@@ -516,8 +560,20 @@ function editCustomer($conn, $customer_id)
 
                                             <div class="col-sm-12 mb-3">
                                                 <label class="form-label required">Name Product</label>
-                                                <input type="text" name="name" class="form-control" placeholder="Enter Name Product..." value="<?php echo $product['product_name']; ?>" readonly>
+                                                <input type="text" name="name" class="form-control" placeholder="Enter Name Product..." value="<?php echo $product['product_name']; ?>">
                                             </div>
+                                            <div class="col-sm-12 mb-3">
+                                                <label class="form-label required">Category</label>
+                                                <select class="form-select" id="category" name="category" style="height: auto; padding: 0.375rem 2.25rem 0.375rem 0.75rem;">
+                                                    <?php
+                                                    foreach ($categories as $category) {
+                                                        $selected = ($category['category_id'] == $product['category_id']) ? 'selected' : ''; // Kiểm tra nếu ID của danh mục trùng khớp với danh mục của sản phẩm
+                                                        echo '<option value="' . $category['category_id'] . '" ' . $selected . '>' . $category['name'] . '</option>';
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </div>
+
                                             <div class="col-sm-12 mb-3">
                                                 <label class="form-label required">Price</label>
                                                 <input type="number" name="price" class="form-control" value="<?php echo $product['price']; ?>">

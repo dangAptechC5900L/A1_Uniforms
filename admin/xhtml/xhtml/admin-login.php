@@ -1,4 +1,12 @@
 <?php
+
+
+// Kiểm tra nếu đã đăng nhập, chuyển hướng người dùng đến trang khác
+if(isset($_SESSION['login']) && $_SESSION['login'] === TRUE) {
+    header("location: index.php"); // Thay đổi index.php thành URL của trang bạn muốn chuyển hướng đến
+    exit;
+}
+
 require_once('../../../function.php');
 global $conn;
 initConnection();
