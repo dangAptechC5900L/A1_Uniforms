@@ -86,11 +86,10 @@ $rows = getTotalProduct($conn);
 	<!-- Meta -->
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	
+
 	<!-- MOBILE SPECIFIC -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- Favicon icon -->
-
 
 	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
 	<link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -101,9 +100,6 @@ $rows = getTotalProduct($conn);
 
 <body>
 
-	<!--*******************
-        Preloader start
-    ********************-->
 	<div id="preloader">
 		<div class="sk-three-bounce">
 			<div class="sk-child sk-bounce1"></div>
@@ -111,9 +107,7 @@ $rows = getTotalProduct($conn);
 			<div class="sk-child sk-bounce3"></div>
 		</div>
 	</div>
-	<!--*******************
-        Preloader end
-    ********************-->
+
 
 	<!--**********************************
         Main wrapper start
@@ -160,17 +154,10 @@ $rows = getTotalProduct($conn);
 						</div>
 
 						<ul class="navbar-nav header-right">
-							<!-- <li class="nav-item dropdown notification_dropdown">
-								<div class="input-group search-area">
-									<input type="text" class="form-control" placeholder="Search here...">
-									<span class="input-group-text"><a href="javascript:void(0)"><i class="flaticon-381-search-2"></i></a></span>
-								</div>
-							</li> -->
 							<li class="nav-item dropdown notification_dropdown">
 								<a class="nav-link bell  primary dz-theme-mode" href="javascript:void(0);">
 									<i id="icon-light" class="fas fa-sun"></i>
 									<i id="icon-dark" class="fas fa-moon"></i>
-
 								</a>
 							</li>
 
@@ -740,7 +727,7 @@ $rows = getTotalProduct($conn);
 													<td>
 
 														<div class="d-flex">
-														<a href="edit-product.php?product_id=<?php echo $product['product_id']; ?>&selected_file=<?php echo $product['avatar_product']; ?>" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>
+															<a href="edit-product.php?product_id=<?php echo $product['product_id']; ?>&selected_file=<?php echo $product['avatar_product']; ?>" class="btn btn-primary shadow btn-xs sharp me-1"><i class="fas fa-pencil-alt"></i></a>
 
 
 														</div>

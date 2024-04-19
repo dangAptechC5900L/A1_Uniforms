@@ -68,7 +68,7 @@ function getTotalProductCount($conn, $category_id)
 // Hàm getProductById để lấy danh sách sản phẩm theo category_id, offset và số lượng sản phẩm trên mỗi trang
 function getProductById($conn, $category_id, $offset, $itemsPerPage)
 {
-    $query = "SELECT * FROM product WHERE category_id = ? LIMIT ?, ?";
+    $query = "SELECT * FROM product WHERE category_id = ? AND isDeleted=0 LIMIT ?, ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param('iii', $category_id, $offset, $itemsPerPage);
     $stmt->execute();
@@ -126,7 +126,7 @@ function getCategoryByID($conn)
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>A-1 uniforms - home</title>
+    <title>A-1 uniforms - Category</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon" href="../assets/img/favicon.svg">

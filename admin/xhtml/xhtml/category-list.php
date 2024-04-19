@@ -1,7 +1,15 @@
 <?php
+session_start();
 include '../../../function.php';
 
 $conn = initConnection();
+
+// Kiểm tra xem người dùng đã đăng nhập chưa
+if (!isset($_SESSION['login']) || $_SESSION['login'] !== TRUE) {
+    // Nếu không, chuyển hướng người dùng đến trang đăng nhập
+    header("Location: admin-login.php");
+    exit;
+}
 
 //Change Status
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['category_id'])) {
@@ -81,31 +89,15 @@ $rows = getTotalCategory($conn);
 
 <head>
 	<!-- Title -->
-	<title>Tixia - Ticketing Admin Dashboard Bootstrap HTML Template | DexignZone</title>
+	<title>A-1 uniforms - Category</title>
 
 	<!-- Meta -->
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="author" content="DexignZone">
-	<meta name="robots" content="index, follow">
-
-	<meta name="keywords" content="	admin dashboard, admin template, administration, analytics, bootstrap, bootstrap admin, coupon, deal, modern, responsive admin dashboard, ticket, ticket dashboard, ticket system, admin panel,	Ticketing admin, Dashboard template, Bootstrap HTML, Ticket management, Event ticketing, Responsive design, User-friendly interface, Efficiency, Streamlining operations, Event management, Ticket sales, Customizable template, Stylish design, Modern dashboard">
-	<meta name="description" content="Discover Tixia, the ultimate solution for ticketing administration. Our Bootstrap HTML Template empowers you to streamline ticketing tasks, enhancing operational efficiency with style and ease. Simplify your processes and elevate your ticketing management experience today.">
-
-	<meta property="og:title" content="Tixia - Ticketing Admin Dashboard Bootstrap HTML Template | DexignZone">
-	<meta property="og:description" content="Discover Tixia, the ultimate solution for ticketing administration. Our Bootstrap HTML Template empowers you to streamline ticketing tasks, enhancing operational efficiency with style and ease. Simplify your processes and elevate your ticketing management experience today.">
-	<meta property="og:image" content="page-error-404.html">
-	<meta name="format-detection" content="telephone=no">
-
-	<meta name="twitter:title" content="Tixia - Ticketing Admin Dashboard Bootstrap HTML Template | DexignZone">
-	<meta name="twitter:description" content="Discover Tixia, the ultimate solution for ticketing administration. Our Bootstrap HTML Template empowers you to streamline ticketing tasks, enhancing operational efficiency with style and ease. Simplify your processes and elevate your ticketing management experience today.">
-	<meta name="twitter:image" content="page-error-404.html">
-	<meta name="twitter:card" content="summary_large_image">
-
+	
 	<!-- MOBILE SPECIFIC -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- Favicon icon -->
-
 
 	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
 	<link href="vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -117,9 +109,6 @@ $rows = getTotalCategory($conn);
 
 <body>
 
-	<!--*******************
-        Preloader start
-    ********************-->
 	<div id="preloader">
 		<div class="sk-three-bounce">
 			<div class="sk-child sk-bounce1"></div>
@@ -127,9 +116,6 @@ $rows = getTotalCategory($conn);
 			<div class="sk-child sk-bounce3"></div>
 		</div>
 	</div>
-	<!--*******************
-        Preloader end
-    ********************-->
 
 	<!--**********************************
         Main wrapper start
@@ -349,7 +335,7 @@ $rows = getTotalCategory($conn);
 						</a>
 						<ul aria-expanded="false">
 							<li><a href="page-register.html">Register <span class="badge badge-xs badge-danger ms-2">New</span></a></li>
-							<li><a href="page-login.html">Login</a></li>
+							<li><a href="logout.php">Login</a></li>
 							<li><a class="has-arrow" href="javascript:void(0);" aria-expanded="false">Error</a>
 								<ul aria-expanded="false">
 									<li><a href="page-error-400.html">Error 400</a></li>

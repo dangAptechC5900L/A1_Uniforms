@@ -34,7 +34,7 @@ function getCategoryByID($conn)
 
 function searchProductByName($conn, $searchTerm)
 {
-    $sql = "SELECT * FROM product WHERE product_name LIKE ?";
+    $sql = "SELECT * FROM product WHERE product_name LIKE ?  AND isDeleted=0";
     $stmt = $conn->prepare($sql);
     $searchTerm = '%' . $searchTerm . '%';
     $stmt->bind_param("s", $searchTerm);

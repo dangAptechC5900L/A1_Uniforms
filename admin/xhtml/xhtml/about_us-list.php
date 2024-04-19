@@ -1,7 +1,16 @@
 <?php
+session_start();
 include '../../../function.php';
 
 $conn = initConnection();
+
+
+// Kiểm tra xem người dùng đã đăng nhập chưa
+if (!isset($_SESSION['login']) || $_SESSION['login'] !== TRUE) {
+    // Nếu không, chuyển hướng người dùng đến trang đăng nhập
+    header("Location: admin-login.php");
+    exit;
+}
 
 // Change Status
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_about'])) {
@@ -81,27 +90,11 @@ $rows = getTotalAboutUs($conn);
 
 <head>
 	<!-- Title -->
-	<title>Tixia - Ticketing Admin Dashboard Bootstrap HTML Template | DexignZone</title>
+	<title>A1-Uniforms - About_Us</title>
 
 	<!-- Meta -->
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="author" content="DexignZone">
-	<meta name="robots" content="index, follow">
-
-	<meta name="keywords" content="	admin dashboard, admin template, administration, analytics, bootstrap, bootstrap admin, coupon, deal, modern, responsive admin dashboard, ticket, ticket dashboard, ticket system, admin panel,	Ticketing admin, Dashboard template, Bootstrap HTML, Ticket management, Event ticketing, Responsive design, User-friendly interface, Efficiency, Streamlining operations, Event management, Ticket sales, Customizable template, Stylish design, Modern dashboard">
-	<meta name="description" content="Discover Tixia, the ultimate solution for ticketing administration. Our Bootstrap HTML Template empowers you to streamline ticketing tasks, enhancing operational efficiency with style and ease. Simplify your processes and elevate your ticketing management experience today.">
-
-	<meta property="og:title" content="Tixia - Ticketing Admin Dashboard Bootstrap HTML Template | DexignZone">
-	<meta property="og:description" content="Discover Tixia, the ultimate solution for ticketing administration. Our Bootstrap HTML Template empowers you to streamline ticketing tasks, enhancing operational efficiency with style and ease. Simplify your processes and elevate your ticketing management experience today.">
-	<meta property="og:image" content="page-error-404.html">
-	<meta name="format-detection" content="telephone=no">
-
-	<meta name="twitter:title" content="Tixia - Ticketing Admin Dashboard Bootstrap HTML Template | DexignZone">
-	<meta name="twitter:description" content="Discover Tixia, the ultimate solution for ticketing administration. Our Bootstrap HTML Template empowers you to streamline ticketing tasks, enhancing operational efficiency with style and ease. Simplify your processes and elevate your ticketing management experience today.">
-	<meta name="twitter:image" content="page-error-404.html">
-	<meta name="twitter:card" content="summary_large_image">
-
 	<!-- MOBILE SPECIFIC -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- Favicon icon -->
@@ -117,9 +110,6 @@ $rows = getTotalAboutUs($conn);
 
 <body>
 
-	<!--*******************
-        Preloader start
-    ********************-->
 	<div id="preloader">
 		<div class="sk-three-bounce">
 			<div class="sk-child sk-bounce1"></div>
@@ -209,7 +199,7 @@ $rows = getTotalAboutUs($conn);
 										</svg>
 										<span class="ms-2">Inbox </span>
 									</a>
-									<a href="page-login.html" class="dropdown-item ai-icon">
+									<a href="logout.php" class="dropdown-item ai-icon">
 										<svg id="icon-logout" xmlns="http://www.w3.org/2000/svg" class="text-danger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 											<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
 											<polyline points="16 17 21 12 16 7"></polyline>

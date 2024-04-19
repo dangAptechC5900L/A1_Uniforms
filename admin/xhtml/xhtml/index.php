@@ -54,9 +54,6 @@ $contact = fetchContactData($conn);
 
 <body>
 
-	<!--*******************
-        Preloader start
-    ********************-->
 	<div id="preloader">
 		<div class="sk-three-bounce">
 			<div class="sk-child sk-bounce1"></div>
@@ -64,9 +61,7 @@ $contact = fetchContactData($conn);
 			<div class="sk-child sk-bounce3"></div>
 		</div>
 	</div>
-	<!--*******************
-        Preloader end
-    ********************-->
+
 
 	<!--**********************************
         Main wrapper start
@@ -180,7 +175,7 @@ $contact = fetchContactData($conn);
 		<div class="deznav">
 			<div class="deznav-scroll">
 				<ul class="metismenu" id="menu">
-					<li><a class="has-arrow ai-icon" href="index.html" aria-expanded="false">
+					<li><a class="has-arrow ai-icon" href="index.php" aria-expanded="false">
 							<i class="flaticon-381-networking"></i>
 							<span class="nav-text">Index</span>
 						</a>
@@ -205,7 +200,7 @@ $contact = fetchContactData($conn);
 						</a>
 						<ul aria-expanded="false">
 							<li><a href="customer-list.php">Customers List</a></li>
-							<li><a href="add-customers.html">Add Customers</a></li>
+							<li><a href="add-customers.php">Add Customer</a></li>
 
 						</ul>
 					</li>
@@ -239,20 +234,8 @@ $contact = fetchContactData($conn);
 						</ul>
 					</li>
 
-					<li><a class="has-arrow ai-icon" href="javascript:void(0);" aria-expanded="false">
-							<i class="flaticon-381-network"></i>
-							<span class="nav-text">Table</span>
-						</a>
-						<ul aria-expanded="false">
-							<li><a href="table-bootstrap-basic.html">Bootstrap</a></li>
-							<li><a href="table-datatable-basic.html">Datatable</a></li>
-						</ul>
-					</li>
-					<li><a href="reports.html" class="ai-icon" aria-expanded="false">
-							<i class="flaticon-381-list"></i>
-							<span class="nav-text">Report <span class="badge badge-xs badge-danger ms-2">New</span></span>
-						</a>
-					</li>
+					
+					
 
 				</ul>
 				<div class="copyright">
@@ -365,46 +348,11 @@ $contact = fetchContactData($conn);
             Footer end
         ***********************************-->
 
-		<!-- modal box strat -->
-		<!-- Modal -->
-		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h1 class="modal-title fs-5" id="exampleModalLabel">Event Title</h1>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						<div class="row">
-							<div class="col-xl-12">
-								<div class="mb-3">
-									<label for="exampleFormControlInput1" class="form-label">Event Name</label>
-									<input type="text" class="form-control" id="exampleFormControlInput1" placeholder="The Story Of Danau Toba">
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-danger light" data-bs-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary">Save changes</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!--**********************************
-           Support ticket button start
-        ***********************************-->
-
-		<!--**********************************
-           Support ticket button end
-        ***********************************-->
+		
 
 
 	</div>
-	<!--**********************************
-        Main wrapper end
-    ***********************************-->
+
 
 	<!--**********************************
         Scripts
