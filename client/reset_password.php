@@ -273,9 +273,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <li><a href="login.php">Login</a></li>
                                         <li><a href="register.php">Register</a></li>
                                         <li><a href="shop.php">Shop</a></li>
-                                        <li><a href="about.php">About Us</a></li>
-                                        <li><a href="contact.php">Contact Us</a></li>
-                                        <li><a href="#">Returns</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -285,12 +282,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <h3>Extras</h3>
                                 <div class="footer_menu">
                                     <ul>
-                                        <li><a href="#">Brands</a></li>
-                                        <li><a href="#">Gift Certificates</a></li>
-                                        <li><a href="#">Affiliate</a></li>
-                                        <li><a href="#">Specials</a></li>
-                                        <li><a href="contact.php">Site Map</a></li>
-                                        <li><a href="#">My Account</a></li>
+                                        <li><a href="about.php">About Us</a></li>
+                                        <li><a href="contact.php">Contact Us</a></li>
+                                        <li><a href="#">Returns</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -318,7 +312,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <h3>Contact Us</h3>
                                 <div class="footer_contact">
                                     <p>Phone: <a href="tel:0(1234) 567 890">0(1234) 567 890</a> </p>
-                                    <p>Email: <a href="mailto:a1uniforms@gmail.com">a1uniforms@gmail.com</a></p>
+<p>Email: <a href="mailto:a1uniforms@gmail.com">a1uniforms@gmail.com</a></p>
                                     <p>Address: <a href="#">Address: 285 Doi Can Street, Lieu Giai Ward, Ba Dinh District, Hanoi City</a></p>
                                     <ul>
                                         <li><a href="#" title="Twitter"><i class="fa fa-twitter"></i></a></li>

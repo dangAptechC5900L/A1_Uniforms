@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['customer_name'] = $row['customer_name'];
             $_SESSION['customer_id'] = $row['customer_id'];
             if ($remember == 'on') {
-                $expire = time() + 3600 * 24 * 30; 
+                $expire = time() + 3600 * 24 * 30;
                 setcookie('email', $email, $expire);
                 setcookie('password', $password, $expire);
             }
@@ -36,6 +36,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit;
         } else {
             $errors[] = "Invalid username or password";
+            $error_message = "";
+            foreach ($errors as $error) {
+                $error_message .= $error . "\\n";
+            }
+            echo "<script>alert('" . $error_message . "');</script>";
         }
     }
 }
@@ -49,9 +54,10 @@ if (isset($_COOKIE['email']) && isset($_COOKIE['password'])) {
           </script>";
 }
 
+
 function getCategoryByID($conn)
 {
-    $sql = "SELECT * FROM category";
+    $sql = "SELECT * FROM category WHERE isDeleted=0";
     $result = $conn->query($sql);
 
     $categories = []; // Khởi tạo mảng chứa dữ liệu
@@ -277,9 +283,6 @@ $categories=getCategoryByID($conn);
                                         <li><a href="login.php">Login</a></li>
                                         <li><a href="register.php">Register</a></li>
                                         <li><a href="shop.php">Shop</a></li>
-                                        <li><a href="about.php">About Us</a></li>
-                                        <li><a href="contact.php">Contact Us</a></li>
-                                        <li><a href="#">Returns</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -289,12 +292,9 @@ $categories=getCategoryByID($conn);
                                 <h3>Extras</h3>
                                 <div class="footer_menu">
                                     <ul>
-                                        <li><a href="#">Brands</a></li>
-                                        <li><a href="#">Gift Certificates</a></li>
-                                        <li><a href="#">Affiliate</a></li>
-                                        <li><a href="#">Specials</a></li>
-                                        <li><a href="contact.php">Site Map</a></li>
-                                        <li><a href="#">My Account</a></li>
+                                        <li><a href="about.php">About Us</a></li>
+                                        <li><a href="contact.php">Contact Us</a></li>
+                                        <li><a href="#">Returns</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -322,7 +322,7 @@ $categories=getCategoryByID($conn);
                                 <h3>Contact Us</h3>
                                 <div class="footer_contact">
                                     <p>Phone: <a href="tel:0(1234) 567 890">0(1234) 567 890</a> </p>
-                                    <p>Email: <a href="mailto:a1uniforms@gmail.com">a1uniforms@gmail.com</a></p>
+<p>Email: <a href="mailto:a1uniforms@gmail.com">a1uniforms@gmail.com</a></p>
                                     <p>Address: <a href="#">Address: 285 Doi Can Street, Lieu Giai Ward, Ba Dinh District, Hanoi City</a></p>
                                     <ul>
                                         <li><a href="#" title="Twitter"><i class="fa fa-twitter"></i></a></li>

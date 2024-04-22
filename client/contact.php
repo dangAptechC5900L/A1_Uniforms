@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 function getCategoryByID($conn)
 {
-    $sql = "SELECT * FROM category";
+    $sql = "SELECT * FROM category WHERE isDeleted=0";
     $result = $conn->query($sql);
 
     $categories = []; // Khởi tạo mảng chứa dữ liệu
@@ -298,8 +298,9 @@ $categories = getCategoryByID($conn);
                                     </div>
                                 </div>
                                 <div class="branch-location">
-                                    <button class="branch-location__btn">
-                                        location
+                                <button class="branch-location__btn">
+                                        <a id="location-1" target="_blank">location
+                                        </a>
                                     </button>
                                 </div>
                             </div>
@@ -326,8 +327,9 @@ $categories = getCategoryByID($conn);
                                     </div>
                                 </div>
                                 <div class="branch-location">
-                                    <button class="branch-location__btn">
-                                        location
+                                <button class="branch-location__btn">
+                                        <a id="location-2" target="_blank">location
+                                        </a>
                                     </button>
                                 </div>
                             </div>
@@ -399,9 +401,6 @@ $categories = getCategoryByID($conn);
                                         <li><a href="login.php">Login</a></li>
                                         <li><a href="register.php">Register</a></li>
                                         <li><a href="shop.php">Shop</a></li>
-                                        <li><a href="about.php">About Us</a></li>
-                                        <li><a href="contact.php">Contact Us</a></li>
-                                        <li><a href="#">Returns</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -411,12 +410,9 @@ $categories = getCategoryByID($conn);
                                 <h3>Extras</h3>
                                 <div class="footer_menu">
                                     <ul>
-                                        <li><a href="#">Brands</a></li>
-                                        <li><a href="#">Gift Certificates</a></li>
-                                        <li><a href="#">Affiliate</a></li>
-                                        <li><a href="#">Specials</a></li>
-                                        <li><a href="contact.php">Site Map</a></li>
-                                        <li><a href="#">My Account</a></li>
+                                        <li><a href="about.php">About Us</a></li>
+                                        <li><a href="contact.php">Contact Us</a></li>
+                                        <li><a href="#">Returns</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -433,8 +429,7 @@ $categories = getCategoryByID($conn);
                                             <p>Establishment date: 04/03/2016</p>
                                         </li>
                                         <li>
-                                            <p>Field: Fashion, Accessories, Uniforms. A-1 Uniforms builds and develops
-                                                products that bring value to the community.</p>
+                                            <p>Field: Fashion, Accessories, Uniforms. A-1 Uniforms builds and develops products that bring value to the community.</p>
                                         </li>
                                     </ul>
                                 </div>
@@ -445,9 +440,8 @@ $categories = getCategoryByID($conn);
                                 <h3>Contact Us</h3>
                                 <div class="footer_contact">
                                     <p>Phone: <a href="tel:0(1234) 567 890">0(1234) 567 890</a> </p>
-                                    <p>Email: <a href="mailto:a1uniforms@gmail.com">a1uniforms@gmail.com</a></p>
-                                    <p>Address: <a href="#">Address: 285 Doi Can Street, Lieu Giai Ward, Ba Dinh
-                                            District, Hanoi City</a></p>
+<p>Email: <a href="mailto:a1uniforms@gmail.com">a1uniforms@gmail.com</a></p>
+                                    <p>Address: <a href="#">Address: 285 Doi Can Street, Lieu Giai Ward, Ba Dinh District, Hanoi City</a></p>
                                     <ul>
                                         <li><a href="#" title="Twitter"><i class="fa fa-twitter"></i></a></li>
                                         <li><a href="#" title="google-plus"><i class="fa fa-google-plus"></i></a></li>
@@ -478,7 +472,19 @@ $categories = getCategoryByID($conn);
 
     <script src="../assets/js/plugins.js"></script>
     <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/plugins.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script>
+        const btnShareLocation = document.getElementById('location-1')
+        const btnShareLocation2 = document.getElementById('location-2')
+        btnShareLocation.addEventListener('click', async (e) => {
+            btnShareLocation.href = 'https://www.google.com/maps?q=20.980002,105.795509';
+        })
 
+        btnShareLocation2.addEventListener('click', async (e) => {
+            btnShareLocation2.href = 'https://www.google.com/maps?q=21.035479,105.8181791';
+        })
+    </script>
 
 
 </body>

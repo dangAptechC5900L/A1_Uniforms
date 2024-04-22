@@ -15,7 +15,7 @@ mysqli_close($conn);
 
 function getCategoryByID($conn)
 {
-    $sql = "SELECT * FROM category";
+    $sql = "SELECT * FROM category WHERE isDeleted=0";
     $result = $conn->query($sql);
 
     $categories = []; // Khởi tạo mảng chứa dữ liệu
@@ -29,9 +29,6 @@ function getCategoryByID($conn)
 
     return $categories; // Trả về mảng categories
 }
-
-
-
 function searchProductByName($conn, $searchTerm)
 {
     $sql = "SELECT * FROM product WHERE product_name LIKE ?  AND isDeleted=0";
@@ -332,87 +329,81 @@ function searchProductByName($conn, $searchTerm)
     <!--shop  area end-->
 
     <!--footer area start-->
-    <footer class="footer_widgets">
+    <footer class="footer_widgets other_widgets">
         <div class="footer_top">
             <div class="container">
-                <div class="row">
-                    <div class="col-lg-2 col-md-6 col-sm-6 col-6">
-                        <div class="widgets_container">
-                            <h3>Information</h3>
-                            <div class="footer_menu">
-                                <ul>
-                                    <li><a href="about.php">About Us</a></li>
-                                    <li><a href="#">Delivery Information</a></li>
-                                    <li><a href="privacy-policy.html">Privacy Policy</a></li>
-                                    <li><a href="#">Terms & Conditions</a></li>
-                                    <li><a href="contact.php">Contact Us</a></li>
-                                    <li><a href="#">Returns</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-6 col-sm-6 col-6">
-                        <div class="widgets_container">
-                            <h3>Extras</h3>
-                            <div class="footer_menu">
-                                <ul>
-                                    <li><a href="#">Brands</a></li>
-                                    <li><a href="#">Gift Certificates</a></li>
-                                    <li><a href="#">Affiliate</a></li>
-                                    <li><a href="#">Specials</a></li>
-                                    <li><a href="contact.php">Site Map</a></li>
-                                    <li><a href="my-account.html">My Account</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="widgets_container contact_us">
-                            <h3>Contact Us</h3>
-                            <div class="footer_contact">
-                                <p>Address:Your address goes here.</p>
-                                <p>Phone: <a href="tel:01234567890">01234567890</a> </p>
-                                <p>Email: demo@example.com</p>
-                                <ul>
-                                    <li><a href="#" title="Twitter"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#" title="google-plus"><i class="fa fa-google-plus"></i></a></li>
-                                    <li><a href="#" title="facebook"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#" title="youtube"><i class="fa fa-youtube"></i></a></li>
-                                </ul>
+                <div class="footer_top_inner">
+                    <div class="row">
 
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="widgets_container newsletter">
-                            <h3>Join Our Newsletter Now</h3>
-                            <div class="newleter-content">
-                                <p>Exceptional quality. Ethical factories. Sign up to enjoy free U.S. shipping and
-                                    returns on your first order.</p>
-                                <div class="subscribe_form">
-                                    <form id="mc-form" class="mc-form footer-newsletter">
-                                        <input id="mc-email" type="email" autocomplete="off" placeholder="Enter you email address here..." />
-                                        <button id="mc-submit">Subscribe !</button>
-                                    </form>
-                                    <!-- mailchimp-alerts Start -->
-                                    <div class="mailchimp-alerts text-centre">
-                                        <div class="mailchimp-submitting"></div><!-- mailchimp-submitting end -->
-                                        <div class="mailchimp-success"></div><!-- mailchimp-success end -->
-                                        <div class="mailchimp-error"></div><!-- mailchimp-error end -->
-                                    </div><!-- mailchimp-alerts end -->
+                        <div class="col-lg-3 col-md-6 col-sm-6 col-6">
+                            <div class="widgets_container">
+                                <h3>Information</h3>
+                                <div class="footer_menu">
+                                    <ul>
+                                        <li><a href="login.php">Login</a></li>
+                                        <li><a href="register.php">Register</a></li>
+                                        <li><a href="shop.php">Shop</a></li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-lg-3 col-md-6 col-sm-6 col-6">
+                            <div class="widgets_container">
+                                <h3>Extras</h3>
+                                <div class="footer_menu">
+                                    <ul>
+                                        <li><a href="about.php">About Us</a></li>
+                                        <li><a href="contact.php">Contact Us</a></li>
+                                        <li><a href="#">Returns</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-6 col-6">
+                            <div class="widgets_container">
+                                <h3>A-1 Uniforms Company</h3>
+                                <div class="footer_menu">
+                                    <ul>
+                                        <li>
+                                            <p>Tax code: 010888888</p>
+                                        </li>
+                                        <li>
+                                            <p>Establishment date: 04/03/2016</p>
+                                        </li>
+                                        <li>
+                                            <p>Field: Fashion, Accessories, Uniforms. A-1 Uniforms builds and develops products that bring value to the community.</p>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-6 col-6">
+                            <div class="widgets_container contact_us">
+                                <h3>Contact Us</h3>
+                                <div class="footer_contact">
+                                    <p>Phone: <a href="tel:0(1234) 567 890">0(1234) 567 890</a> </p>
+<p>Email: <a href="mailto:a1uniforms@gmail.com">a1uniforms@gmail.com</a></p>
+                                    <p>Address: <a href="#">Address: 285 Doi Can Street, Lieu Giai Ward, Ba Dinh District, Hanoi City</a></p>
+                                    <ul>
+                                        <li><a href="#" title="Twitter"><i class="fa fa-twitter"></i></a></li>
+                                        <li><a href="#" title="google-plus"><i class="fa fa-google-plus"></i></a></li>
+                                        <li><a href="#" title="facebook"><i class="fa fa-facebook"></i></a></li>
+                                        <li><a href="#" title="youtube"><i class="fa fa-youtube"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
         <div class="footer_bottom">
             <div class="container">
-               <div class="row">
+                <div class="row">
                     <div class="col-md-12">
                         <div class="copyright_area">
-                            <p> &copy; 2024 <strong> A-1 Uniforms</strong></p>
+                            <p> &copy; 2024 <strong> A-1 Uniforms </strong></p>
                         </div>
                     </div>
                 </div>

@@ -32,8 +32,6 @@ function fetchContactData($conn)
 // Gọi hàm để lấy dữ liệu
 $contact = fetchContactData($conn);
 
-
-
 ?>
 
 <!DOCTYPE html>
@@ -88,30 +86,6 @@ $contact = fetchContactData($conn);
 		</div>
 		<!--**********************************
             Nav header end
-        ***********************************-->
-
-		<!--**********************************
-            Chat box start
-        ***********************************-->
-		<div class="chatbox">
-			<div class="chatbox-close"></div>
-			<div class="custom-tab-1">
-				<ul class="nav nav-tabs">
-					<li class="nav-item">
-						<a class="nav-link" data-bs-toggle="tab" href="#notes">Notes</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" data-bs-toggle="tab" href="#alerts">Alerts</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link active" data-bs-toggle="tab" href="#chat">Chat</a>
-					</li>
-				</ul>
-
-			</div>
-		</div>
-		<!--**********************************
-            Chat box End
         ***********************************-->
 
 		<!--**********************************
@@ -260,59 +234,7 @@ $contact = fetchContactData($conn);
 							</div>
 						</div>
 					</div>
-					<div class="col-xl-12 col-xxxl-12 col-lg-12">
-						<div class="card">
-							<div class="card-header border-0 pb-3 d-sm-flex d-block ">
-								<h4 class="card-title">Latest Sales</h4>
-								<div class="d-flex mt-3 mt-sm-0">
-									<select class="default-select form-control form-control-sm me-3 style-1" aria-label="Default select example">
-										<option selected>Weekly</option>
-										<option value="1">Daily</option>
-										<option value="2">Monthly</option>
-									</select>
-									<select class="default-select form-control form-control-sm style-1" aria-label="Default select example">
-										<option selected>2023</option>
-										<option value="1">2023</option>
-										<option value="2">2024</option>
-									</select>
-								</div>
-							</div>
-							<div class="card-body">
-								<div class="row mx-0 align-items-center">
-									<div class="col-sm-8 col-md-7 col-xxl-7 px-0 text-center mb-3 mb-sm-0">
-										<div id="chart" class="d-inline-block"></div>
-									</div>
-									<div class="col-sm-4 col-md-5 col-xxl-5 px-0">
-										<div class="chart-deta">
-											<div class="col px-0">
-												<span class="bg-warning"></span>
-												<div class="mx-3">
-													<p class="fs-14">Ticket Left</p>
-													<h3>21,512</h3>
-												</div>
-											</div>
-											<div class="col px-0">
-												<span class="bg-primary"></span>
-												<div class="mx-3">
-													<p class="fs-14">Ticket Sold</p>
-													<h3>456,72</h3>
-												</div>
-											</div>
-											<div class="col px-0">
-												<span class="bg-success"></span>
-												<div class="mx-3">
-													<p class="fs-14">Event Held</p>
-													<h3>235</h3>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-
+				
 				</div>
 			</div>
 		</div>
@@ -320,18 +242,11 @@ $contact = fetchContactData($conn);
             Content body end
         ***********************************-->
 
-		<!--**********************************
-            Footer start
-        ***********************************-->
 		<div class="footer">
 			<div class="copyright">
 				<p class="op5">© 2024 A-1 Uniforms</p>
 			</div>
 		</div>
-		<!--**********************************
-            Footer end
-        ***********************************-->
-
 	</div>
 
 
